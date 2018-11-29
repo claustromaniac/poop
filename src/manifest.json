@@ -20,6 +20,6 @@
 		"webRequestBlocking",
 		"<all_urls>"
 	],
-	"short_name": "POOP.",
-	"version": "0.1.0"
+	"short_name": "POOP",
+	"version": "0.1.1"
 }
