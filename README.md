@@ -10,9 +10,9 @@ Once an `Origin` is stripped this way, the related response is modified to ensur
 See [this topic][issue] for more detailed information.
 
 ## Privacy
-This addon neither collects nor shares any kind of information whatsoever.
+This extension neither collects nor shares any kind of information whatsoever.
 
-## Acknowledgements:
+## Acknowledgments:
 Thanks [@crssi](https://github.com/crssi) for bringing attention to this previously overlooked tracking vector!
 
 ## Disclaimer
