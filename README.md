@@ -3,7 +3,8 @@
 Prevent Firefox from sending `Origin` headers for any given request that fulfills the following conditions:
 
 - uses the GET method.
-- does not include one or more `Cookie` headers.
+- does not include one or more `Cookie` or `Authorization` headers.
+- does not include URL parameters (`protocol://hostname:port/path/?parameters`)
 
 Once an `Origin` is stripped this way, the related response is modified to ensure that it includes an `Access-Control-Allow-Origin: *` header.
 
