@@ -2,9 +2,10 @@
 	'use strict';
 	const requestsByID = {};
 	const filter = {urls: ["<all_urls>"]};
+	const queryrx = /[^?]+\?[^/]+$/;
 
 	browser.webRequest.onBeforeSendHeaders.addListener(d => {
-		if (!d.requestHeaders || d.method !== 'GET') return;
+		if (!d.requestHeaders || d.method !== 'GET' || queryrx.test(d.url)) return;
 		const newHeaders = [];
 		let origin = false;
 		let unsafe = false;
@@ -13,6 +14,8 @@
 				case 'origin':
 					origin = header.value;
 					break;
+				case 'authorization':
+					unsafe = true;
 				case 'cookie':
 					unsafe = true;
 				default:
