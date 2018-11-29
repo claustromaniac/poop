@@ -1,0 +1,24 @@
+{
+	"applications": {
+		"gecko": {
+			"id": "poop@cm.org",
+			"strict_min_version": "52.0"
+		}
+	},
+	"author": "claustromaniac",
+	"background": {	"scripts": [ "poop.js" ] },
+	"description": "Prevent Firefox from sending Origin headers when they are most likely to be unnecessary, to protect your privacy.",
+	"homepage_url": "https://github.com/claustromaniac/poop",
+	"icons": {
+		"64": "icons/poop.svg"
+	},
+	"manifest_version": 2,
+	"name": "Privacy-Oriented Origin Policy",
+	"permissions": [
+		"webRequest",
+		"webRequestBlocking",
+		"<all_urls>"
+	],
+	"short_name": "POOP",
+	"version": "0.2.0"
+}
