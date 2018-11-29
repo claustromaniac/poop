@@ -14,9 +14,10 @@ See [this topic][issue] for more detailed information.
 This extension neither collects nor shares any kind of information whatsoever.
 
 ## Acknowledgments:
-Thanks [@crssi](https://github.com/crssi) for bringing attention to this previously overlooked tracking vector!
+Big thanks to [@crssi](https://github.com/crssi) for bringing attention to this previously overlooked tracking vector!
 
 ## Disclaimer
 I wrote this to be as safe as possible, but it *is* somewhat experimental. Use at your own risk.
+Also, ideally you'd want to remove referer headers too, which this extension alone doesn't.
 
 [issue]: https://github.com/ghacksuserjs/ghacks-user.js/issues/509
