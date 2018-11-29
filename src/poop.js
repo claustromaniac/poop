@@ -41,12 +41,12 @@
 		return {responseHeaders: newHeaders};
 	}, filter, ['blocking', 'responseHeaders']);
 
-	const clear = id => {
-		if (requestsByID[id]) delete requestsByID[id];
+	const clear = d => {
+		if (requestsByID[d.requestId]) delete requestsByID[d.requestId];
 	};
 	browser.webRequest.onCompleted.addListener(clear, filter);
 	browser.webRequest.onErrorOccurred.addListener(clear, filter);
 	browser.webRequest.onBeforeRedirect.addListener(d => {
-		if (d.redirectUrl && ~d.redirectUrl.indexOf('data://')) clear(d.requestId);
+		if (d.redirectUrl && ~d.redirectUrl.indexOf('data://')) clear(d);
 	}, filter);
 })();
