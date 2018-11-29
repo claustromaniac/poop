@@ -16,6 +16,8 @@
 					break;
 				case 'authorization':
 					unsafe = true;
+					newHeaders.push(header);
+					break;
 				case 'cookie':
 					unsafe = true;
 				default:
