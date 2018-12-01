@@ -8,27 +8,23 @@
 		if (!d.requestHeaders || d.method !== 'GET' || queryrx.test(d.url)) return;
 		const newHeaders = [];
 		let origin = false;
-		let unsafe = false;
 		for (const header of d.requestHeaders) {
 			switch (header.name.toLowerCase()) {
 				case 'origin':
-					origin = header.value;
+					origin = true;
 					break;
 				case 'authorization':
-					unsafe = true;
-					newHeaders.push(header);
-					break;
+					return;
 				case 'cookie':
-					unsafe = true;
+					return;
 				default:
 					newHeaders.push(header);
 			}
 		}
 		if (origin) {
-			if (unsafe) newHeaders.push({name: 'Origin', value: origin});
-			else requestsByID[d.requestId] = true;
+			requestsByID[d.requestId] = true;
+			return {requestHeaders: newHeaders};
 		}
-		return {requestHeaders: newHeaders};
 	}, filter, ['blocking', 'requestHeaders']);
 
 	browser.webRequest.onHeadersReceived.addListener(d => {
