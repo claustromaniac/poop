@@ -10,13 +10,13 @@
 		let origin = false;
 		for (const header of d.requestHeaders) {
 			switch (header.name.toLowerCase()) {
+				case 'cookie':
+					return;
+				case 'authorization':
+					return;
 				case 'origin':
 					origin = true;
 					break;
-				case 'authorization':
-					return;
-				case 'cookie':
-					return;
 				default:
 					newHeaders.push(header);
 			}
