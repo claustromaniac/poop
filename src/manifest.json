@@ -6,7 +6,11 @@
 		}
 	},
 	"author": "claustromaniac",
-	"background": {	"scripts": [ "poop.js" ] },
+	"background": {
+		"scripts": [
+			"bg/webRequest.js"
+		]
+	},
 	"description": "Prevent Firefox from sending Origin headers when they are most likely to be unnecessary, to protect your privacy.",
 	"homepage_url": "https://github.com/claustromaniac/poop",
 	"icons": {
