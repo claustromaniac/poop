@@ -1,0 +1,22 @@
+body {
+	display: table;
+	height: 30em;
+}
+form {
+	width: 50em;
+}
+div {
+	display: flex;
+	flex-wrap: wrap;
+	flex-direction: row;
+}
+div.browser-style {
+	align-items: center;
+	width: 30%;
+}
+button {
+	margin-left: 0.25em;
+}
+legend {
+	font-size: 1.2em;
+}

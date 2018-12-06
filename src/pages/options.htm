@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<link rel="stylesheet" href="options.css">
+		<script src="misc.js"></script>
+		<script defer src="options.js"></script>
+	</head>
+	<body>
+		<form>
+			<fieldset><legend>General</legend>
+				<div class="browser-style">
+					<input id="sync" type="checkbox"><label for="sync">use Sync storage</label>
+				</div>
+			</fieldset>
+			<fieldset><legend>Operation mode</legend>
+				<p class="help"> This defines the main criteria for removing Origins. Both modes should be perfectly safe, but the aggressive mode is less tolerant, therefore it causes more web content to break. The relaxed mode should break website functionality only very rarely. You can override this setting on a per-site basis and even fully whitelist individual sites from the popup menu.<br></p>
+				<div class="browser-style">
+					<input id="aggressive" type="radio" name="mode" value="2"><label for="aggressive">aggressive</label>
+				</div>
+				<div class="browser-style">
+					<input id="relaxed" type="radio" name="mode" value="1"><label for="relaxed">relaxed (default)</label>
+				</div>
+			</fieldset>
+			<fieldset><legend>Strict resource types</legend>
+				<p class="help"> Origin headers will always be removed from GET requests of the types selected here, except on whitelisted sites. These rules take precedence over the operation mode.<br></p>
+				<div>
+					<div class="browser-style">
+						<input id="font" type="checkbox"><label for="font">font</label>
+					</div>
+					<div class="browser-style">
+						<input id="image" type="checkbox"><label for="image">image</label>
+					</div>
+					<div class="browser-style">
+						<input id="media" type="checkbox"><label for="media">media</label>
+					</div>
+					<div class="browser-style">
+						<input id="script" type="checkbox"><label for="script">script</label>
+					</div>
+					<div class="browser-style">
+						<input id="stylesheet" type="checkbox"><label for="stylesheet">stylesheet</label>
+					</div>
+					<div class="browser-style">
+						<input id="xhr" type="checkbox"><label for="xmlhttprequest">xmlhttprequest (XHR)</label>
+					</div>
+				</div>
+			</fieldset>
+		<br><button type="submit" class="browser-style">Save</button>
+		</form>
+	</body>
+</html>

@@ -8,21 +8,34 @@
 	"author": "claustromaniac",
 	"background": {
 		"scripts": [
+			"bg/classes.js",
+			"bg/globals.js",
+			"bg/runtime.js",
+			"bg/tabs.js",
 			"bg/webRequest.js"
 		]
 	},
-	"description": "Prevent Firefox from sending Origin headers when they are most likely to be unnecessary, to protect your privacy.",
-	"homepage_url": "https://github.com/claustromaniac/poop",
-	"icons": {
-		"64": "icons/poop.svg"
+	"browser_action": {
+		"browser_style": true,
+		"default_icon": {"64": "icons/poop.svg"},
+		"default_popup": "pages/popup.htm",
+		"default_title": "Privacy-Oriented Origin Policy"
 	},
+	"description": "Prevent Firefox from sending Origin headers when they are least likely to be necessary, to avoid disclosing which sites you are browsing to third-parties",
+	"homepage_url": "https://github.com/claustromaniac/poop",
+	"icons": {"64": "icons/poop.svg"},
 	"manifest_version": 2,
 	"name": "Privacy-Oriented Origin Policy",
+	"options_ui": {
+		"browser_style": true,
+		"page": "pages/options.htm"
+	},
 	"permissions": [
+		"<all_urls>",
+		"storage",
 		"webRequest",
-		"webRequestBlocking",
-		"<all_urls>"
+		"webRequestBlocking"
 	],
 	"short_name": "POOP",
-	"version": "0.3.0"
+	"version": "1.0.0b"
 }

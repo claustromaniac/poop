@@ -1,0 +1,39 @@
+body {
+	display: table;
+	padding: 1em 2em;
+}
+div {
+	text-align: center;
+	width: 100%
+}
+div.browser-style {
+	align-items: center;
+	display: flex;
+	flex-wrap: nowrap;
+	flex-direction: row;
+}
+.box {
+	bottom: 50%;
+	margin: 0;
+	position: relative;
+	top: 50%;
+	transform: translate(0, -50%);
+}
+.field {
+	background-color: #EEE;
+	border: 1px solid #DDD;
+	font-size: 1.4em;
+}
+#switch {
+	justify-content: right;
+}
+#fs {
+	align-items: inherit;
+	justify-content: center;
+}
+#altered{
+	color: green;
+}
+#errors {
+	color: red;
+}
