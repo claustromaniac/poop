@@ -1,7 +1,5 @@
 'use strict';
 
-let storage;
-
 document.addEventListener('DOMContentLoaded', () => {
 	const ui = getElements([
 		'enabled', 'host', 'altered', 'errors', 'global', 'aggressive', 'relaxed', 'off'
@@ -21,7 +19,7 @@ document.addEventListener('DOMContentLoaded', () => {
 					ui.off.disabled = false;
 					ui.relaxed.disabled = false;
 					ui.aggressive.disabled = false;
-					switch (msg.mode) {
+					switch (msg.overrides[msg._host]) {
 						case 0:
 							ui.off.checked = true;
 							break;
@@ -35,29 +33,28 @@ document.addEventListener('DOMContentLoaded', () => {
 							ui.global.checked = true;
 					}
 				}
-				storage = msg.sync ? browser.storage.sync : browser.storage.local;
 				ui.enabled.onchange = e => {
-					storage.set({enabled: ui.enabled.checked});
+					browser.storage.local.set({enabled: ui.enabled.checked});
 				};
 				const cb = e => {
 					if (e.target.checked) {
-						const change = {}
-						change[ui.host.textContent] = +e.target.value;
-						storage.set(change);
+						msg.overrides[msg._host] = +e.target.value;
+						browser.storage.local.set({overrides: msg.overrides});
 					}
 				};
 				ui.off.onchange = cb;
 				ui.relaxed.onchange = cb;
 				ui.aggressive.onchange = cb;
 				ui.global.onchange = e => {
-					if (ui.global.checked) storage.remove(ui.host.textContent);
+					if (ui.global.checked) {
+						delete msg.overrides[msg._host];
+						browser.storage.local.set({overrides: msg.overrides});
+					}
 				};
 			} else {
-				if (msg._host) {
-					ui.host.textContent = msg._host;
-					ui.altered.textContent = (msg._successes + msg._errors).toString();
-					ui.errors.textContent = msg._errors.toString();
-				}
+				ui.host.textContent = msg._host;
+				ui.altered.textContent = (msg._successes + msg._errors).toString();
+				ui.errors.textContent = msg._errors.toString();
 			}
 		});
 		port.postMessage(tabs[0].id);

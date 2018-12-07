@@ -21,7 +21,7 @@
 		"default_popup": "pages/popup.htm",
 		"default_title": "Privacy-Oriented Origin Policy"
 	},
-	"description": "Prevent Firefox from sending Origin headers when they are least likely to be necessary, to avoid disclosing which sites you are browsing to third-parties",
+	"description": "Prevent Firefox from sending Origin headers when they are least likely to be necessary, to avoid disclosing to third-parties which sites you are browsing",
 	"homepage_url": "https://github.com/claustromaniac/poop",
 	"icons": {"64": "icons/poop.svg"},
 	"manifest_version": 2,
@@ -37,5 +37,5 @@
 		"webRequestBlocking"
 	],
 	"short_name": "POOP",
-	"version": "1.0.0b"
+	"version": "1.0.0b2"
 }

@@ -2,35 +2,31 @@ class Settings {
 	constructor() {
 		this.defaults = {
 			'enabled': true,
-			'relaxed': true, //false = aggressive //host-specific overrides: 0=whitelisted, 1=relaxed, 2=aggressive
+			'relaxed': true,	//false = aggressive
+			'overrides': {},	//host-specific overrides: 0=whitelisted, 1=relaxed, 2=aggressive
 			'strictTypes': {
 				'font': true,
 				'image': false,
+				'imageset': false,
 				'media': false,
+				'object': false,
+				'object_subrequest': false,
+				'other': false,
 				'script': false,
 				'stylesheet': true,
+				'websocket': false,
 				'xmlhttprequest': false
-			},
-			'sync': false
+			}
 		};
 		this.loading = (async () => {
 			let saved = await browser.storage.local.get(this.defaults);
-			saved = await browser.storage.sync.get(saved);
 			this.all = saved;
-			if (this.sync) await browser.storage.sync.set(saved);
-			else await browser.storage.sync.clear();
 			await browser.storage.local.set(saved);
 			browser.storage.onChanged.addListener((changes, area) => {
 				console.log(`Privacy-Oriented Origin Policy: ${area} storage changed`);
-				if (area === 'sync' && !this.sync) return;
 				for (const i in changes) {
 					if (changes[i].hasOwnProperty('newValue')) this[i] = changes[i].newValue;
 					else if (changes[i].hasOwnProperty('oldValue')) delete this[i];
-				}
-				if (area === 'sync') {
-					browser.storage.local.clear().then(this.all).then(r => {
-						browser.storage.local.set(r);
-					});
 				}
 			});
 			console.log('Privacy-Oriented Origin Policy: settings loaded');
@@ -88,7 +84,7 @@ class TabInfo {
 		return settings[this.host] = n;
 	}
 	get mode() {
-		if (settings.hasOwnProperty(this.host)) return settings[this.host];
+		if (settings.overrides.hasOwnProperty(this.host)) return settings.overrides[this.host];
 		return settings.relaxed ? 1 : 2;
 	}
 	updateBadge() {
@@ -113,22 +109,23 @@ class Tabs {
 		if (!this[id]) this[id] = new TabInfo(id);
 		return this[id];
 	}
-	getPopupInfo(id) {
-		return {
-			enabled: settings.enabled,
-			errors: this[id]._errors,
-			host: this[id]._host,
-			mode: settings[(this[id].host)],
-			successes: this[id]._successes,
-			sync: settings.sync
-		};
-	}
 }
 
 class Popup {
 	refresh(id) {
 		if (this.id !== id) return;
-		this.port.postMessage(tabs[id]);
+		const tab = tabs.getInfo(id);
+		if (this.host === tab.host) this.port.postMessage(tab);
+		else this.sendAll(tab);
+	}
+	sendAll(tab) {
+		this.port.postMessage({
+			_errors: tab.errors,
+			_host: tab.host,
+			_successes: tab.successes,
+			enabled: settings.enabled,
+			overrides: settings.overrides
+		});
 	}
 	start(id, port) {
 		this.id = id;
@@ -136,15 +133,10 @@ class Popup {
 		port.onDisconnect.addListener(p => {
 			delete this.id;
 			delete this.port;
+			delete this.host;
 		});
 		const tab = tabs.getInfo(id);
-		port.postMessage({
-			_errors: tab.errors,
-			_host: tab.host,
-			_successes: tab.successes,
-			enabled: settings.enabled,
-			mode: settings[(tab.host)],
-			sync: settings.sync
-		});
+		this.host = tab.host;
+		this.sendAll(tab);
 	}
 }

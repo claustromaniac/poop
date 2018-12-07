@@ -2,8 +2,11 @@ body {
 	display: table;
 	height: 30em;
 }
-form {
+fieldset {
 	width: 50em;
+}
+textarea {
+	width: 100% !important;
 }
 div {
 	display: flex;
@@ -12,11 +15,22 @@ div {
 }
 div.browser-style {
 	align-items: center;
-	width: 30%;
+	width: 40%;
 }
 button {
 	margin-left: 0.25em;
 }
-legend {
+summary {
 	font-size: 1.2em;
+}
+#saved {
+	color: #0F0;
+	margin-left: 1em;
+}
+.hidden {
+	opacity: 0;
+	transition:opacity 500ms;
+}
+.shown {
+	opacity: 1;
 }
