@@ -2,7 +2,7 @@ class Settings {
 	constructor() {
 		this.defaults = {
 			'enabled': true,
-			'relaxed': true, //global operation mode (overruled by strictTypes and rulesByHost) false = aggressive;
+			'relaxed': true, //false = aggressive //host-specific overrides: 0=whitelisted, 1=relaxed, 2=aggressive
 			'strictTypes': {
 				'font': true,
 				'image': false,
@@ -12,7 +12,6 @@ class Settings {
 				'xmlhttprequest': false
 			},
 			'sync': false
-			 //host-specific overrides: 0=whitelisted, 1=Relaxed, 2=aggressive
 		};
 		this.loading = (async () => {
 			let saved = await browser.storage.local.get(this.defaults);
@@ -93,6 +92,7 @@ class TabInfo {
 		return settings.relaxed ? 1 : 2;
 	}
 	updateBadge() {
+		popup.refresh(this.id);
 		const c = this._errors ? 'darkred' : 'darkgreen';
 		browser.browserAction.setBadgeBackgroundColor({
 			color: c,
@@ -122,5 +122,29 @@ class Tabs {
 			successes: this[id]._successes,
 			sync: settings.sync
 		};
+	}
+}
+
+class Popup {
+	refresh(id) {
+		if (this.id !== id) return;
+		this.port.postMessage(tabs[id]);
+	}
+	start(id, port) {
+		this.id = id;
+		this.port = port;
+		port.onDisconnect.addListener(p => {
+			delete this.id;
+			delete this.port;
+		});
+		const tab = tabs.getInfo(id);
+		port.postMessage({
+			_errors: tab.errors,
+			_host: tab.host,
+			_successes: tab.successes,
+			enabled: settings.enabled,
+			mode: settings[(tab.host)],
+			sync: settings.sync
+		});
 	}
 }
