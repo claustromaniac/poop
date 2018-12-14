@@ -44,10 +44,10 @@
 				switch (header.name.toLowerCase()) {
 					case 'origin':
 						if (settings.rdExclusions) {
-							info.root = info.root ? info.root : getRoot(info.host);
-							if (getRoot(target.hostname) === info.root) {
+							const oHostname = (new URL(header.value)).hostname;
+							if (getRoot(target.hostname) === getRoot(oHostname)) {
 								console.debug(
-									`Privacy-Oriented Origin Policy: request #${d.requestId} skipped. Reason: root domains match\n${d.documentUrl}\n${d.url}`
+									`Privacy-Oriented Origin Policy: request #${d.requestId} skipped. Reason: root domains match\n${header.value}\n${d.url}`
 								);
 								return;
 							}
@@ -70,10 +70,10 @@
 						return;
 					case 'origin':
 						if (settings.rdExclusions) {
-							info.root = info.root ? info.root : getRoot(info.host);
-							if (getRoot(target.hostname) === info.root) {
+							const oHostname = (new URL(header.value)).hostname;
+							if (getRoot(target.hostname) === getRoot(oHostname)) {
 								console.debug(
-									`Privacy-Oriented Origin Policy: request #${d.requestId} skipped. Reason: root domains match\n${d.documentUrl}\n${d.url}`
+									`Privacy-Oriented Origin Policy: request #${d.requestId} skipped. Reason: root domains match\n${header.value}\n${d.url}`
 								);
 								return;
 							}
