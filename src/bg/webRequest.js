@@ -55,7 +55,7 @@
 						origin = true;
 						break;
 					case 'referer':
-						if (settings.referers) referer = {Referer: `${target.origin}/`};
+						if (settings.referers) referer = {name:'Referer', value:`${target.origin}/`};
 						break;
 					default:
 						newHeaders.push(header);
@@ -81,7 +81,7 @@
 						origin = true;
 						break;
 					case 'referer':
-						if (settings.referers) referer = {Referer: `${target.origin}/`};
+						if (settings.referers) referer = {name:'Referer', value:`${target.origin}/`};
 						break;
 					default:
 						newHeaders.push(header);
