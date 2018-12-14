@@ -1,32 +1,39 @@
 'use strict';
 
-const hostrx = /^\s*(\S+\.\S+)\s*$/;
-const valrx = /^\s*([0-2])\s*$/;
-
 function getElements(ids) {
 	const result = {};
 	for (const id of ids) result[id] = document.getElementById(id);
 	return result;
 }
 
-function parseList(text) {
-	const obj = {};
-	for (const entry of text.split(',')) {
-		const pair = entry.split('=');
-		if (
-			pair.length !== 2 ||
-			!hostrx.test(pair[0]) ||
-			!valrx.test(pair[1])
-		) continue;
-		pair[0] = pair[0].replace(hostrx, '$1');
-		pair[1] = pair[1].replace(valrx, '$1');
-		obj[pair[0]] = +pair[1];
-	}
-	return obj;
+const entryrx = /^([0-2])::?(\S+)$/;
+const wildcardrx = /^(?!:).*\*/;
+
+function parseList(str) {
+	const result = [];
+	str.split(/,\s+|\r?\n/).reverse().forEach(e => {
+		e = e.replace(/\s+/g, '');
+		const pattern = e.replace(entryrx, '$2');
+		if (pattern == e) return;
+		const override = {
+			mode: +e.replace(entryrx, '$1'),
+			rule: pattern
+		};
+		if (e.substring(2, 3) == ':') override.regex = pattern;
+		else if (override.rule.includes('*')) override.regex = wildcard2rx(pattern);
+		result.push(override);
+	});
+	return result;
 }
 
-function genList (obj) {
-	const arr = [];
-	for (const i in obj) arr.push(`${i}=${obj[i]}`);
-	return arr.sort().join(', ');
+function genList(arr) {
+	return arr.reverse().map(e => {
+		return `${e.mode}: ${e.rule}`;
+	}).join('\n');
+}
+
+function wildcard2rx(str) {
+	return '^(?:[^:\\s]+:/*)?' + str.split(/\*+/).map(e => {
+		return e.replace(/[.*?$+^|\\{}()[\]]/g, '\\$&');
+	}).join('.*') + '$';
 }

@@ -3,29 +3,44 @@ body {
 	height: 30em;
 }
 fieldset {
-	width: 50em;
-}
-textarea {
-	width: 100% !important;
-}
-div {
-	display: flex;
-	flex-wrap: wrap;
-	flex-direction: row;
-}
-div.browser-style {
-	align-items: center;
-	width: 40%;
-}
-button {
-	margin-left: 0.25em;
+	width: 95vw;
 }
 summary {
 	font-size: 1.2em;
 }
+button {
+	margin-left: 0.25em;
+}
+textarea {
+	font-family: "Consolas";
+	font-weight: 100;
+}
 #saved {
-	color: #0F0;
+	color: #0B0;
+	font-weight: 300;
 	margin-left: 1em;
+}
+.code {
+	background-color: #000;
+	border: 0.1em solid #777;
+	border-radius: 0.3em;
+	color: #FFF;
+	font-family: "Consolas";
+	font-weight: 100;
+	opacity: 0.3;
+	padding: 0 0.5em;
+}
+.fbox {
+	align-items: center;
+	display: flex;
+	flex-wrap: wrap;
+	flex-direction: row;
+}
+div.browser-style.fbox {
+	width: 40%;
+}
+.hbar{
+	width: 100%;
 }
 .hidden {
 	opacity: 0;

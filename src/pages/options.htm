@@ -9,12 +9,12 @@
 		<script defer src="options.js"></script>
 		<fieldset>
 			<details><summary>Global mode</summary>
-				<p>This defines the main criteria for removing Origins. Both modes should be perfectly safe, but the aggressive mode is less tolerant, therefore it causes more web content to break. The relaxed mode should break website functionality only very rarely.<br></p>
-				<div class="browser-style">
-					<input id="aggressive" name="mode" type="radio"><label for="aggressive">aggressive</label>
+				<p>This defines the main criteria for removing <span class="code">Origin</span> headers. Both modes should be perfectly safe, but the aggressive mode is less tolerant, therefore it causes more web content to break. The relaxed mode should break website functionality only very rarely.</p>
+				<div class="browser-style fbox">
+					<input id="aggressive" type="radio"><label for="aggressive">aggressive</label>
 				</div>
-				<div class="browser-style">
-					<input id="relaxed" name="mode" type="radio"><label for="relaxed">relaxed (default)</label>
+				<div class="browser-style fbox">
+					<input id="relaxed" type="radio"><label for="relaxed">relaxed (default)</label>
 				</div>
 			</details>
 		</fieldset><br>
@@ -25,49 +25,75 @@
 					1 = relaxed<br>
 					0 = whitelisted<br>
 				</p>
-				<textarea autocomplete="off" class="browser-style" id="overrides" rows="10" spellcheck="false"
-				wrap="hard" placeholder="www.example.com = 1, it.is.easy = 0, is.it.not = 2"></textarea>
+				Accepts hostname or full URL
+				<div class="code">0: www.example.com</div>
+				Accepts wildcards
+				<div class="code">2: www.example.*</div>
+				Accepts regular expressions
+				(must separate with <span class="code">::</span> instead of <span class="code">:</span>)
+				<div class="code">1:: ^https?://www\.example\.(com|net)</div>
+				<p>Enter one rule per line. When multiple rules conflict, the one closest to the bottom wins.</p>
+				<textarea autocomplete="off" class="browser-style hbar" id="overrides" rows="10" spellcheck="false"></textarea>
 			</details>
 		</fieldset><br>
 		<fieldset>
-			<details><summary>Strict resource types</summary>
-				<p>Origin headers will always be removed from GET requests of the types selected here. These rules are only meaningful in relaxed mode.<br></p>
-				<div>
-					<div class="browser-style">
+			<details><summary>Type filters</summary>
+				<p>Origin headers will always be removed from <span class="code">GET</span> requests of the types selected here. These filters are only meaningful in relaxed mode.</p>
+				<div class="fbox">
+					<div class="browser-style fbox">
 						<input class="srt" id="font" type="checkbox"><label for="font">font</label>
 					</div>
-					<div class="browser-style">
+					<div class="browser-style fbox">
 						<input class="srt" id="image" type="checkbox"><label for="image">image</label>
 					</div>
-					<div class="browser-style">
+					<div class="browser-style fbox">
 						<input class="srt" id="imageset" type="checkbox"><label for="imageset">imageset</label>
 					</div>
-					<div class="browser-style">
+					<div class="browser-style fbox">
 						<input class="srt" id="media" type="checkbox"><label for="media">media</label>
 					</div>
-					<div class="browser-style">
+					<div class="browser-style fbox">
 						<input class="srt" id="object" type="checkbox"><label for="object">object</label>
 					</div>
-					<div class="browser-style">
+					<div class="browser-style fbox">
 						<input class="srt" id="object_subrequest" type="checkbox">
 						<label for="object_subrequest">object_subrequest (plugin)</label>
 					</div>
-					<div class="browser-style">
+					<div class="browser-style fbox">
 						<input class="srt" id="script" type="checkbox"><label for="script">script</label>
 					</div>
-					<div class="browser-style">
+					<div class="browser-style fbox">
 						<input class="srt" id="stylesheet" type="checkbox"><label for="stylesheet">stylesheet</label>
 					</div>
-					<div class="browser-style">
+					<div class="browser-style fbox">
 						<input class="srt" id="websocket" type="checkbox"><label for="websocket">websocket</label>
 					</div>
-					<div class="browser-style">
+					<div class="browser-style fbox">
 						<input class="srt" id="xmlhttprequest" type="checkbox">
 						<label for="xmlhttprequest">xmlhttprequest (XHR)</label>
 					</div>
-					<div class="browser-style">
+					<div class="browser-style fbox">
 						<input class="srt" id="other" type="checkbox" ><label for="other">other</label>
 					</div>
+				</div>
+			</details>
+		</fieldset><br>
+		<fieldset>
+			<details><summary>Other</summary>
+				<p>If this is enabled, the extension will call a subroutine to exclude requests based on a root domain comparison, to prevent breakage. <span class="code">Origin</span> headers will not be removed from requests when the resource's root domain matches the origin's root domain, like this:</p>
+				<div class="code">
+					thisisanexample.com<br>
+					www.thisisanexample.co.uk
+				</div><br>
+				<div class="browser-style fbox">
+					<input id="rdExclusions" type="checkbox"><label for="rdExclusions">
+						Exclude root domain matches
+					</label>
+				</div>
+				<p>Removing origins from requests that also include <span class="code">Referer</span> headers can make you look more unique than not removing anything. With this option enabled, any referrers found in the requests altered by this extension will be spoofed.</p>
+				<div class="browser-style fbox">
+					<input id="referers" type="checkbox">
+					<label for="referers">Spoof cross-origin <span class="code">Referer</span></label>
 				</div>
 			</details>
 		</fieldset><br>

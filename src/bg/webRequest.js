@@ -3,32 +3,63 @@
 	const acao = {name: 'Access-Control-Allow-Origin', value: '*'};
 	const filter = {urls: ["<all_urls>"]};
 	const rIDs = {}; // tab objs by request ID
-	const queryrx = /^[^:]+:\/*[^/:]+\/[^?]*\?./; //regex for detecting url query
+	const getRoot = host => {
+		const parts = host.split('.');
+		let root;
+		while (parts.length) {
+			root = parts.shift();
+			if (publicSuffixes.has(parts.join('.'))) break;
+		}
+		return root;
+	};
 
 	browser.webRequest.onBeforeSendHeaders.addListener(d => {
-		if (d.tabId === -1 || !d.requestHeaders || d.method !== 'GET') return;
+		if (d.tabId === -1 || !d.requestHeaders) return;
 		if (d.type === 'main_frame') {
 			delete rIDs[d.requestId];
 			delete tabs[d.tabId];
 			return;
 		}
 		const info = tabs.getInfo(d.tabId);
-		info.host = d.documentUrl;
-		const mode = info.mode;
+		info.url = d.documentUrl;
+		if (d.method !== 'GET' || !settings.enabled) return;
+		const mode = info.getMode();
+		if (!mode) return;
+		const target = new URL(d.url);
 		if (
-			!mode || (
-				!settings.strictTypes[d.type] && (
-					mode === 1 && queryrx.test(d.url)
-				)
+			mode === 1 &&
+			!settings.strictTypes[d.type] && (
+				target.searchParams ||
+				target.hash ||
+				target.username ||
+				target.password
 			)
 		) return;
 
 		const newHeaders = [];
-		let origin = false;
+		let origin;
+		let referer;
 		if (mode === 2 || settings.strictTypes[d.type]) {
 			for (const header of d.requestHeaders) {
-				if (header.name.toLowerCase() === 'origin') origin = true;
-				else newHeaders.push(header);
+				switch (header.name.toLowerCase()) {
+					case 'origin':
+						if (settings.rdExclusions) {
+							info.root = info.root ? info.root : getRoot(info.host);
+							if (getRoot(target.hostname) === info.root) {
+								console.debug(
+									`Privacy-Oriented Origin Policy: request #${d.requestId} skipped. Reason: root domains match\n${d.documentUrl}\n${d.url}`
+								);
+								return;
+							}
+						}
+						origin = true;
+						break;
+					case 'referer':
+						if (settings.referers) referer = {Referer: `${target.origin}/`};
+						break;
+					default:
+						newHeaders.push(header);
+				}
 			}
 		} else {
 			for (const header of d.requestHeaders) {
@@ -38,7 +69,19 @@
 					case 'authorization':
 						return;
 					case 'origin':
+						if (settings.rdExclusions) {
+							info.root = info.root ? info.root : getRoot(info.host);
+							if (getRoot(target.hostname) === info.root) {
+								console.debug(
+									`Privacy-Oriented Origin Policy: request #${d.requestId} skipped. Reason: root domains match\n${d.documentUrl}\n${d.url}`
+								);
+								return;
+							}
+						}
 						origin = true;
+						break;
+					case 'referer':
+						if (settings.referers) referer = {Referer: `${target.origin}/`};
 						break;
 					default:
 						newHeaders.push(header);
@@ -46,6 +89,12 @@
 			}
 		}
 		if (origin) {
+			if (referer) {
+				newHeaders.push(referer);
+				console.debug(
+					`Privacy-Oriented Origin Policy: Referer spoofed (request #${d.requestId})\n${referer.value}\n${target.origin}/`
+				);
+			}
 			rIDs[d.requestId] = info;
 			return {requestHeaders: newHeaders};
 		}
@@ -66,7 +115,7 @@
 	browser.webRequest.onCompleted.addListener(d => {
 		if (rIDs[d.requestId]) {
 			rIDs[d.requestId].successes++;
-			console.log(
+			console.debug(
 				`Privacy-Oriented Origin Policy: request #${d.requestId} successfully altered\n	type: ${d.type}\n	url: ${d.url}`
 			);
 			delete rIDs[d.requestId];
@@ -75,7 +124,7 @@
 	browser.webRequest.onErrorOccurred.addListener(d => {
 		if (rIDs[d.requestId]) {
 			rIDs[d.requestId].errors++;
-			console.log(
+			console.debug(
 				`Privacy-Oriented Origin Policy: altered request #${d.requestId} resulted in an error\n	type: ${d.type}\n	url: ${d.url}`
 			);
 			delete rIDs[d.requestId];

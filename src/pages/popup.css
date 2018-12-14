@@ -4,7 +4,10 @@ body {
 }
 div {
 	text-align: center;
-	width: 100%
+	width: 100%;
+}
+div, fieldset {
+	border-radius: 0.3em;
 }
 div.browser-style {
 	align-items: center;
@@ -23,6 +26,11 @@ div.browser-style {
 	background-color: #EEE;
 	border: 1px solid #DDD;
 	font-size: 1.4em;
+}
+.rxMatch {
+	font-style: oblique;
+	font-weight: 700;
+	text-decoration: underline;
 }
 #switch {
 	justify-content: right;

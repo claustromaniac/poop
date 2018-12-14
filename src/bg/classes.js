@@ -2,8 +2,10 @@ class Settings {
 	constructor() {
 		this.defaults = {
 			'enabled': true,
+			'rdExclusions': false,
+			'referers': true,
 			'relaxed': true,	//false = aggressive
-			'overrides': {},	//host-specific overrides: 0=whitelisted, 1=relaxed, 2=aggressive
+			'overrides': [],	//host-specific overrides: 0=whitelisted, 1=relaxed, 2=aggressive
 			'strictTypes': {
 				'font': true,
 				'image': false,
@@ -20,10 +22,11 @@ class Settings {
 		};
 		this.loading = (async () => {
 			let saved = await browser.storage.local.get(this.defaults);
+			if (!Array.isArray(saved.overrides)) saved.overrides = [];
 			this.all = saved;
 			await browser.storage.local.set(saved);
 			browser.storage.onChanged.addListener((changes, area) => {
-				console.log(`Privacy-Oriented Origin Policy: ${area} storage changed`);
+				console.debug(`Privacy-Oriented Origin Policy: ${area} storage changed`);
 				for (const i in changes) {
 					if (changes[i].hasOwnProperty('newValue')) this[i] = changes[i].newValue;
 					else if (changes[i].hasOwnProperty('oldValue')) delete this[i];
@@ -43,15 +46,30 @@ class Settings {
 	}
 	set all(obj) {
 		for (const i in obj) this[i] = obj[i];
+		tabs.wipeInfoCaches();
+	}
+	set enabled(bool) {
+		if (this._enabled === !!bool) return this._enabled;
+		if (bool) {
+			browser.browserAction.setBadgeBackgroundColor({color: null});
+			browser.browserAction.setBadgeText({text: null});
+		} else {
+			browser.browserAction.setBadgeBackgroundColor({color: '#999'});
+			browser.browserAction.setBadgeText({text: 'off'});
+		}
+		return this._enabled = !!bool;
+	}
+	get enabled() {
+		return this._enabled;
 	}
 }
 
 class TabInfo {
 	constructor(id) {
 		this._errors = 0;
-		this._host = '';
 		this._successes = 0;
 		this.id = id;
+		this.oIndex = -1;
 	}
 	set successes(num) {
 		if (num > this._successes) {
@@ -73,19 +91,35 @@ class TabInfo {
 	get errors() {
 		return this._errors;
 	}
-	set host(url) {
-		if (this._host) return this._host;
-		return this._host = url.replace(/^[^:]+:\/*([^/:]+).*$/, '$1');
+	set url(str) {
+		if (str !== this._url) {
+			this._url = str;
+			this.host = (new URL(str)).hostname;
+			popup.refresh(this.id);
+		}
+		return str;
 	}
-	get host() {
-		return this._host;
-	}
-	set mode(n) {
-		return settings[this.host] = n;
-	}
-	get mode() {
-		if (settings.overrides.hasOwnProperty(this.host)) return settings.overrides[this.host];
-		return settings.relaxed ? 1 : 2;
+	getMode() {
+		if (this.hasOwnProperty('mode')) return this.mode;
+		if (this._url) {
+			this.oIndex = settings.overrides.findIndex(o => {
+				if (!o) return;
+				if (o.rule === this.host || o.rule === this._url) return true;
+				if (o.regex) {
+					const rx = new RegExp(o.regex);
+					return (
+						o.rule.includes('*') && (
+							(
+								o.rule.includes('/') ||
+								!o.rule.includes('.')
+							) && rx.test(this._url)
+						) || rx.test(this.host)
+					) || rx.test(this._url);
+				}
+			});
+			if (this.oIndex !== -1) return this.mode = settings.overrides[this.oIndex].mode;
+			return this.mode = settings.relaxed ? 1 : 2;
+		}
 	}
 	updateBadge() {
 		popup.refresh(this.id);
@@ -109,6 +143,9 @@ class Tabs {
 		if (!this[id]) this[id] = new TabInfo(id);
 		return this[id];
 	}
+	wipeInfoCaches() {
+		for (const i in this) delete this[i].mode;
+	}
 }
 
 class Popup {
@@ -119,11 +156,15 @@ class Popup {
 		else this.sendAll(tab);
 	}
 	sendAll(tab) {
+		delete tab.mode;
+		this.host = tab.host;
 		this.port.postMessage({
 			_errors: tab.errors,
-			_host: tab.host,
 			_successes: tab.successes,
 			enabled: settings.enabled,
+			host: tab.host,
+			mode: tab.getMode(),
+			oIndex: tab.oIndex,
 			overrides: settings.overrides
 		});
 	}
@@ -136,7 +177,6 @@ class Popup {
 			delete this.host;
 		});
 		const tab = tabs.getInfo(id);
-		this.host = tab.host;
 		this.sendAll(tab);
 	}
 }
