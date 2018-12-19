@@ -47,7 +47,7 @@ document.addEventListener('DOMContentLoaded', () => {
 							rule: msg.host,
 							mode: +e.target.value
 						};
-						if (msg.overrides[msg.oIndex].regex) {
+						if (~msg.oIndex && msg.overrides[msg.oIndex].regex) {
 							browser.storage.local.set({
 								overrides: [override].concat(msg.overrides)
 							});

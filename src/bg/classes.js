@@ -2,6 +2,7 @@ class Settings {
 	constructor() {
 		this.defaults = {
 			'enabled': true,
+			'exclusions': [],
 			'rdExclusions': false,
 			'referers': true,
 			'relaxed': true,	//false = aggressive

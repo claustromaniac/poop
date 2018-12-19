@@ -6,34 +6,54 @@ function getElements(ids) {
 	return result;
 }
 
-const entryrx = /^([0-2])::?(\S+)$/;
-const wildcardrx = /^(?!:).*\*/;
+const overriderx = /^([0-2])::?(\S+)$/;
+const exclusionrx = /^\s*(\S+)[ \t]+(\S+)\s*$/;
 
-function parseList(str) {
+function parseOverrides(str) {
 	const result = [];
 	str.split(/,\s+|\r?\n/).reverse().forEach(e => {
 		e = e.replace(/\s+/g, '');
-		const pattern = e.replace(entryrx, '$2');
+		const pattern = e.replace(overriderx, '$2');
 		if (pattern == e) return;
 		const override = {
-			mode: +e.replace(entryrx, '$1'),
+			mode: +e.replace(overriderx, '$1'),
 			rule: pattern
 		};
 		if (e.substring(2, 3) == ':') override.regex = pattern;
-		else if (override.rule.includes('*')) override.regex = wildcard2rx(pattern);
+		else if (override.rule.includes('*')) override.regex = wildcard2rx('(?:[^:\\s]+:/*)?', pattern);
 		result.push(override);
 	});
 	return result;
 }
 
-function genList(arr) {
+function populateOverrides(arr) {
 	return arr.reverse().map(e => {
 		return `${e.mode}: ${e.rule}`;
 	}).join('\n');
 }
 
-function wildcard2rx(str) {
-	return '^(?:[^:\\s]+:/*)?' + str.split(/\*+/).map(e => {
+function parseExclusions(str) {
+	const result = [];
+	str.split(/,\s+|\r?\n/).reverse().forEach(e => {
+		const target = e.replace(exclusionrx, '$2');
+		if (target == e) return;
+		const origin = e.replace(exclusionrx, '$1');
+		const exclusion = {rule: e};
+		exclusion.origin = origin.includes('*') ? wildcard2rx('', origin) : origin;
+		exclusion.target = target.includes('*') ? wildcard2rx('', target) : target;
+		result.push(exclusion);
+	});
+	return result;
+}
+
+function populateExclusions(arr) {
+	return arr.reverse().map(e => {
+		return e.rule;
+	}).join('\n');
+}
+
+function wildcard2rx(prefix, str) {
+	return '^' + prefix + str.split(/\*+/).map(e => {
 		return e.replace(/[.*?$+^|\\{}()[\]]/g, '\\$&');
 	}).join('.*') + '$';
 }

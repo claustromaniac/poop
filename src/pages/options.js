@@ -2,14 +2,27 @@
 var settings;
 document.addEventListener('DOMContentLoaded', e => {
 	const ui = getElements([
-		'relaxed', 'aggressive', 'overrides', 'rdExclusions',
-		'referers', 'save', 'saved'
-
+		'relaxed', 'aggressive', 'd1', 'd2', 'd3', 'd4', 'd5', 'exclusions',
+		'overrides', 'rdExclusions', 'referers', 'save', 'saved'
 	]);
 	const srt = document.getElementsByClassName('srt');
+	browser.storage.local.get({
+		d1: false, d2: false, d3: false, d4: false, d5: false
+	}).then(r => {
+		const cb = e => {
+			const val = {};
+			val[e.target.id] = e.target.open;
+			browser.storage.local.set(val);
+		};
+		for (const i in r) {
+			ui[i].open = r[i];
+			ui[i].addEventListener('toggle', cb);
+		}
+	});
 	browser.runtime.sendMessage(true).then(msg => {
 		settings = msg;
-		ui.overrides.value = genList(msg.overrides);
+		ui.exclusions.value = populateExclusions(msg.exclusions);
+		ui.overrides.value = populateOverrides(msg.overrides);
 		ui.relaxed.checked = msg.relaxed;
 		ui.aggressive.checked = !msg.relaxed;
 		ui.rdExclusions.checked = msg.rdExclusions;
@@ -19,7 +32,8 @@ document.addEventListener('DOMContentLoaded', e => {
 	ui.save.onclick = e => {
 		ui.saved.textContent = '. . .';
 		ui.saved.className = 'shown';
-		settings.overrides = parseList(ui.overrides.value);
+		settings.exclusions = parseExclusions(ui.exclusions.value);
+		settings.overrides = parseOverrides(ui.overrides.value);
 		settings.relaxed = ui.relaxed.checked;
 		settings.rdExclusions = ui.rdExclusions.checked;
 		settings.referers = ui.referers.checked;

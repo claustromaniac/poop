@@ -6,11 +6,25 @@
 	const getRoot = host => {
 		const parts = host.split('.');
 		let root;
-		while (parts.length) {
+		while (parts.length > 1) {
 			root = parts.shift();
 			if (publicSuffixes.has(parts.join('.'))) break;
 		}
 		return root;
+	};
+	const isExcluded = (origin, target) => {
+		const arr = settings.exclusions;
+		for (const e of arr) {
+			if (e.origin.includes('*')) {
+				const rx = new RegExp(e.origin);
+				if (!rx.test(origin)) continue;
+			} else if (e.origin !== origin) continue;
+			if (e.target.includes('*')) {
+				const rx = new RegExp(e.target);
+				if (!rx.test(target)) continue;
+			} else if (e.target !== target) continue;
+			return true;
+		}
 	};
 
 	browser.webRequest.onBeforeSendHeaders.addListener(d => {
@@ -39,61 +53,52 @@
 		const newHeaders = [];
 		let origin;
 		let referer;
-		if (mode === 2 || settings.strictTypes[d.type]) {
-			for (const header of d.requestHeaders) {
-				switch (header.name.toLowerCase()) {
-					case 'origin':
-						if (settings.rdExclusions) {
-							const oHostname = (new URL(header.value)).hostname;
-							if (getRoot(target.hostname) === getRoot(oHostname)) {
-								console.debug(
-									`Privacy-Oriented Origin Policy: request #${d.requestId} skipped. Reason: root domains match\n${header.value}\n${d.url}`
-								);
-								return;
-							}
+		for (const header of d.requestHeaders) {
+			switch (header.name.toLowerCase()) {
+				case 'cookie':
+					if (mode === 1 && !settings.strictTypes[d.type]) return;
+					newHeaders.push(header);
+					break;
+				case 'referer':
+					referer = header;
+					break;
+				case 'origin':
+					if (settings.rdExclusions) {
+						const temp = (new URL(header.value)).hostname;
+						if (getRoot(temp) === getRoot(target.hostname)) {
+							console.debug(
+								`Privacy-Oriented Origin Policy: request #${d.requestId} skipped. Reason: root domains match\n${header.value}\n${d.url}`
+							);
+							return;
 						}
-						origin = true;
-						break;
-					case 'referer':
-						if (settings.referers) referer = {name:'Referer', value:`${target.origin}/`};
-						break;
-					default:
-						newHeaders.push(header);
-				}
-			}
-		} else {
-			for (const header of d.requestHeaders) {
-				switch (header.name.toLowerCase()) {
-					case 'cookie':
-						return;
-					case 'authorization':
-						return;
-					case 'origin':
-						if (settings.rdExclusions) {
-							const oHostname = (new URL(header.value)).hostname;
-							if (getRoot(target.hostname) === getRoot(oHostname)) {
-								console.debug(
-									`Privacy-Oriented Origin Policy: request #${d.requestId} skipped. Reason: root domains match\n${header.value}\n${d.url}`
-								);
-								return;
-							}
+					}
+					if (settings.exclusions.length) {
+						const temp = (new URL(header.value)).hostname;
+						if (isExcluded(temp, target.hostname)) {
+							console.debug(
+								`Privacy-Oriented Origin Policy: request #${d.requestId} skipped. Reason: exclusion rule matched`
+							);
+							return;
 						}
-						origin = true;
-						break;
-					case 'referer':
-						if (settings.referers) referer = {name:'Referer', value:`${target.origin}/`};
-						break;
-					default:
-						newHeaders.push(header);
-				}
+					}
+					origin = true;
+					break;
+				case 'authorization':
+					if (mode === 1 && !settings.strictTypes[d.type]) return;
+					newHeaders.push(header);
+					break;
+				default:
+					newHeaders.push(header);
 			}
 		}
 		if (origin) {
 			if (referer) {
-				newHeaders.push(referer);
-				console.debug(
-					`Privacy-Oriented Origin Policy: Referer spoofed (request #${d.requestId})\n${referer.value}\n${target.origin}/`
-				);
+				if (settings.referers) {
+					newHeaders.push({name:'Referer', value:`${target.origin}/`});
+					console.debug(
+						`Privacy-Oriented Origin Policy: Referer spoofed (request #${d.requestId})\n${target.origin}`
+					);
+				} else newHeaders.push(referer);
 			}
 			rIDs[d.requestId] = info;
 			return {requestHeaders: newHeaders};
@@ -125,7 +130,7 @@
 		if (rIDs[d.requestId]) {
 			rIDs[d.requestId].errors++;
 			console.debug(
-				`Privacy-Oriented Origin Policy: altered request #${d.requestId} resulted in an error\n	type: ${d.type}\n	url: ${d.url}`
+				`Privacy-Oriented Origin Policy: request #${d.requestId} resulted in an error\n	type: ${d.type}\n	url: ${d.url}`
 			);
 			delete rIDs[d.requestId];
 		}
@@ -134,7 +139,7 @@
 		if (
 			rIDs[d.requestId] &&
 			d.redirectUrl &&
-			~d.redirectUrl.indexOf('data://')
+			!d.redirectUrl.indexOf('data:')
 		) delete rIDs[d.requestId];
 	}, filter);
 })();

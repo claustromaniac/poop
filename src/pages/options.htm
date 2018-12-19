@@ -8,7 +8,7 @@
 	<body>
 		<script defer src="options.js"></script>
 		<fieldset>
-			<details><summary>Global mode</summary>
+			<details id="d1"><summary>Global mode</summary>
 				<p>This defines the main criteria for removing <span class="code">Origin</span> headers. Both modes should be perfectly safe, but the aggressive mode is less tolerant, therefore it causes more web content to break. The relaxed mode should break website functionality only very rarely.</p>
 				<div class="browser-style fbox">
 					<input id="aggressive" name="mode" type="radio"><label for="aggressive">aggressive</label>
@@ -19,7 +19,7 @@
 			</details>
 		</fieldset><br>
 		<fieldset>
-			<details><summary>Overrides</summary>
+			<details id="d2"><summary>Overrides</summary>
 				<p>
 					2 = aggressive<br>
 					1 = relaxed<br>
@@ -37,8 +37,8 @@
 			</details>
 		</fieldset><br>
 		<fieldset>
-			<details><summary>Type filters</summary>
-				<p>Origin headers will always be removed from <span class="code">GET</span> requests of the types selected here. These filters are only meaningful in relaxed mode.</p>
+			<details id="d3"><summary>Type filters</summary>
+				<p><span class="code">Origin</span> headers will always be removed from <span class="code">GET</span> requests of the types selected here. These filters are only meaningful in relaxed mode.</p>
 				<div class="fbox">
 					<div class="browser-style fbox">
 						<input class="srt" id="font" type="checkbox"><label for="font">font</label>
@@ -79,8 +79,8 @@
 			</details>
 		</fieldset><br>
 		<fieldset>
-			<details><summary>Other</summary>
-				<p>If this is enabled, the extension will call a subroutine to exclude requests based on a root domain comparison, to prevent breakage. <span class="code">Origin</span> headers will not be removed from requests when the resource's root domain matches the origin's root domain, like this:</p>
+			<details id="d4"><summary>Exclusions</summary>
+				<p>If this is enabled, the extension will call a subroutine to exclude requests based on a comparison of root domains, to prevent breakage. <span class="code">Origin</span> headers will not be removed from requests when the resource's root domain matches the origin's root domain, like this:</p>
 				<div class="code">
 					thisisanexample.com<br>
 					www.thisisanexample.co.uk
@@ -90,7 +90,17 @@
 						Exclude root domain matches
 					</label>
 				</div>
-				<p>Removing origins from requests that also include <span class="code">Referer</span> headers can make you look more unique than not removing anything. With this option enabled, any referrers found in the requests altered by this extension will be spoofed.</p>
+				<hr>
+				<p>You can create additional exclusion rules here using the following syntax</p>
+				<div class="code">&lt;origin hostname&gt;&lt;space&gt;&lt;target hostname&gt;</div>
+				<p>Wildcards are accepted.</p>
+				<textarea autocomplete="off" class="browser-style hbar" id="exclusions" rows="10" spellcheck="false"
+				placeholder="www.youtube.com *.googlevideo.com&#10;* target.always.excluded.com&#10;origin.always.excluded *"></textarea>
+			</details>
+		</fieldset><br>
+		<fieldset>
+			<details id="d5"><summary>Other</summary>
+				<p>Removing <span class="code">Origin</span> headers from requests that also include <span class="code">Referer</span> headers can make you look more unique than not removing anything. With this option enabled, any <span class="code">Referer</span> headers found in the requests altered by this extension will be spoofed.</p>
 				<div class="browser-style fbox">
 					<input id="referers" type="checkbox">
 					<label for="referers">Spoof cross-origin <span class="code">Referer</span></label>
