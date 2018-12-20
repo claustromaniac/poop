@@ -10,9 +10,11 @@ document.addEventListener('DOMContentLoaded', e => {
 		d1: false, d2: false, d3: false, d4: false, d5: false
 	}).then(r => {
 		const cb = e => {
-			const val = {};
-			val[e.target.id] = e.target.open;
-			browser.storage.local.set(val);
+			setTimeout(e => {
+				const val = {};
+				val[e.target.id] = e.target.open;
+				browser.storage.local.set(val);
+			}, 500, e);
 		};
 		for (const i in r) {
 			ui[i].open = r[i];
