@@ -39,9 +39,9 @@ div.browser-style {
 	align-items: inherit;
 	justify-content: center;
 }
-#altered{
+.green {
 	color: green;
 }
-#errors {
+.red {
 	color: red;
 }

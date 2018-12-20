@@ -20,6 +20,8 @@
 		</fieldset><br>
 		<fieldset>
 			<details id="d2"><summary>Overrides</summary>
+				<p>These rules override the mode on a per-site basis. 
+				Use the Exclusions section below if you want to exclude requests instead.</p>
 				<p>
 					2 = aggressive<br>
 					1 = relaxed<br>
@@ -91,7 +93,7 @@
 					</label>
 				</div>
 				<hr>
-				<p>You can create additional exclusion rules here using the following syntax</p>
+				<p>You can exclude requests using patterns here, with the following syntax:</p>
 				<div class="code">&lt;origin hostname&gt;&lt;space&gt;&lt;target hostname&gt;</div>
 				<p>Wildcards are accepted.</p>
 				<textarea autocomplete="off" class="browser-style hbar" id="exclusions" rows="10" spellcheck="false"

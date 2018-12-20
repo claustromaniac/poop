@@ -5,6 +5,8 @@ document.addEventListener('DOMContentLoaded', () => {
 		'enabled', 'host', 'altered', 'errors', 'global', 'aggressive',
 		'aggressiveL', 'relaxed', 'relaxedL', 'off', 'offL'
 	]);
+	let red;
+	let green;
 	browser.tabs.query({active: true, currentWindow: true}).then(tabs => {
 		const port = browser.runtime.connect();
 		window.addEventListener('unload', function(event) {
@@ -74,7 +76,16 @@ document.addEventListener('DOMContentLoaded', () => {
 				};
 			} else {
 				ui.host.textContent = msg.host;
-				ui.altered.textContent = (msg._successes + msg._errors).toString();
+				const altered = msg._successes + msg._errors;
+				if (altered && !green) {
+					green = true;
+					ui.altered.className += ' green';
+				}
+				if (msg._errors && !red) {
+					red = true;
+					ui.errors.className += ' red';
+				}
+				ui.altered.textContent = altered.toString();
 				ui.errors.textContent = msg._errors.toString();
 			}
 		});
