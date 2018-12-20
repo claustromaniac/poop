@@ -1,25 +1,73 @@
-## Privacy-Oriented Origin Policy
+### 🔵 What is this?
 
-Prevent Firefox from sending `Origin` headers for any given request that fulfills **ALL** of the following conditions:
+An extension for Firefox that gives users a safe degree of control over CORS requests, with the specific goal of preventing the browser from leaking unnecessary information.
 
-- uses the GET method.
-- does not include one or more `Cookie` or `Authorization` headers.
-- does not include URL parameters (`protocol://hostname:port/path/?parameters`)
+### 🔵 What is **CORS**?
 
-Once an `Origin` is stripped this way, the related response is modified to ensure that it includes an `Access-Control-Allow-Origin: *` header.
+CORS stands for *Cross-Origin Resource Sharing*. In short, it is a mechanism used for bypassing the same-origin policy safely.
 
-:bangbang: **IMPORTANT**: You should remove `Referer` headers too when the origin & target hostnames don't match, which this extension doesn't do on its own. You can use other extensions for that, or simply set `network.http.referer.XOriginPolicy` to `2` in `about:config`.
+- https://en.wikipedia.org/wiki/Cross-origin_resource_sharing
+- https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS
+- https://w3c.github.io/webappsec-cors-for-developers/
 
-See [this topic][issue] for more detailed information.
+### 🔵 What is the **same-origin policy**?
 
-Since you seem to care about your privacy, I recommend you to also check out [this project][user.js].
+It is a standard that has been widely adopted for many years. From the client's perspective, it denies access to resources when these are requested by other resources that were fetched from a different location. Such requests are known as cross-origin requests. 
 
-## Privacy
-This extension neither collects nor shares any kind of information whatsoever. What would be the point otherwise?
+The same-origin policy is an effective security measure against both [XSS][XSS] and [XSRF][XSRF].
 
-## Acknowledgments:
-Big thanks to [@crssi](https://github.com/crssi) for bringing attention to this previously overlooked tracking vector!
+- https://en.wikipedia.org/wiki/Same-origin_policy
+
+### 🔵 How does **CORS** work?
+
+Every time the browser makes a cross-origin request, it adds an `Origin` HTTP header to it, which tells the server the location of the resource that made the request. After the server parses that header, it decides whether to allow or deny access to its resource from that location. If access is allowed, the sever adds an `Access-Control-Allow-Origin` header to the response, indicating so. The most common values are:
+
+1. `<origin>`: this is the scheme+hostname+port (`https://www.example.org:8080`) of the resource that is allowed access. 
+2. `*`: this means the resource is *public*. It can be accessed from anywhere as long as the request does not include credentials.
+3. `null`: in practice, this denies access to the resource, but this way is discouraged. The recommended way is to not include an `Access-Control-Allow-Origin` header at all.
+4. no header: access is denied.
+
+When the client reads the response headers, it allows or denies access to the resource based on the presence or absence of the `Access-Control-Allow-Origin` header (and its value). If the request did not include credentials, values #1 or #2 (as listed above) allow access to the resource. If it did include credentials, it will not succeed unless the value is #1.
+
+### 🔵 How does **this extension** work?
+
+It has two main modes of operation: aggressive and relaxed.
+
+- The aggressive mode quite simply alters all `GET` requests that include an `Origin` header. This has the potential to break many websites, which is why the extension also allows more fine-grained control via other options like a whitelist and exclusions.
+- The relaxed mode uses heuristics to guess which `GET` requests can include credentials, and excludes those automatically. This is the default mode because it is the easiest way to prevent breakage, but since it relies on heuristics, it is by no means perfect. I recommend you to try out the aggressive mode and whitelist sites when needed instead.
+
+When this extension decides to alter a request (after passing it through all the filters), that request is modified as follows:
+1. The `Origin` header is removed from it.
+2. Since there is no `Origin` header, the server's response most likely does not include an `Access-Control-Allow-Origin` header either, which would normally cause it to fail. To prevent that, this extension injects an `Access-Control-Allow-Origin: *` header in that specific response.
+
+### 🔵 Is this *safe*?
+
+Yes. At worst it will break website functionality, but there are various built-in ways to circumvent that.
+
+### 🔵 Why P.O.O.P.?
+
+Because I'm just a lowly hacker-wannabe and I don't want to raise anyone's expectations if I can avoid it. Plus, it was easy to come up with, and it is just as easy to remember.
+
+### 🔵 Dat icon is tacky AF
+
+![Deal with it.][DWI]
+
+Just pretend it's ice cream or something.
+
+### 🔵 Privacy
+This extension is meant to *protect* your privacy, not *just* respect it. 
+
+Since you're on Firefox and you seem to care about your privacy, I might as well recommend you to take a good look at [this project](https://github.com/ghacksuserjs/ghacks-user.js), which is where this extension was first conceived.
+
+### 🔵 Acknowledgments
+- Big thanks to [crssi](https://github.com/crssi) for [bringing attention][issue] to this previously overlooked tracking vector, for all the help testing, and for all the feature suggestions. If not for him, the extension would still be the half-assed solution I first came up with, because I'm quite the lazy bum.
+- Other alpha/beta testers:
+  - [StanGets](https://github.com/StanGets)
+  - [KOLANICH](https://github.com/KOLANICH)
+  - [AtomGit](https://github.com/atomGit)
 
 
+[XSS]: https://en.wikipedia.org/wiki/Cross-site_scripting
+[XSRF]: https://en.wikipedia.org/wiki/Cross-site_request_forgery
 [issue]: https://github.com/ghacksuserjs/ghacks-user.js/issues/509
-[user.js]: https://github.com/ghacksuserjs/ghacks-user.js
+[DWI]: https://gist.githubusercontent.com/claustromaniac/f054061826ac71bf9e122edb2a313bc0/raw/edf025b5e3fb917177df890fefd15c70ead8b35c/dealwithit.gif
