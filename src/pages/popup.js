@@ -7,6 +7,19 @@ document.addEventListener('DOMContentLoaded', () => {
 	]);
 	let red;
 	let green;
+	const updateCounters = msg => {
+		const altered = msg._successes + msg._errors;
+		if (altered && !green) {
+			green = true;
+			ui.altered.className += ' green';
+		}
+		if (msg._errors && !red) {
+			red = true;
+			ui.errors.className += ' red';
+		}
+		ui.altered.textContent = altered.toString();
+		ui.errors.textContent = msg._errors.toString();
+	};
 	browser.tabs.query({active: true, currentWindow: true}).then(tabs => {
 		const port = browser.runtime.connect();
 		window.addEventListener('unload', function(event) {
@@ -17,8 +30,7 @@ document.addEventListener('DOMContentLoaded', () => {
 				ui.enabled.checked = msg.enabled;
 				if (msg.host) {
 					ui.host.textContent = msg.host;
-					ui.altered.textContent = (msg._successes + msg._errors).toString();
-					ui.errors.textContent = msg._errors.toString();
+					updateCounters(msg);
 					ui.off.disabled = false;
 					ui.relaxed.disabled = false;
 					ui.aggressive.disabled = false;
@@ -76,17 +88,7 @@ document.addEventListener('DOMContentLoaded', () => {
 				};
 			} else {
 				ui.host.textContent = msg.host;
-				const altered = msg._successes + msg._errors;
-				if (altered && !green) {
-					green = true;
-					ui.altered.className += ' green';
-				}
-				if (msg._errors && !red) {
-					red = true;
-					ui.errors.className += ' red';
-				}
-				ui.altered.textContent = altered.toString();
-				ui.errors.textContent = msg._errors.toString();
+				updateCounters(msg);
 			}
 		});
 		port.postMessage(tabs[0].id);
