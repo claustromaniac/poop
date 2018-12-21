@@ -32,11 +32,12 @@
 		if (d.type === 'main_frame') {
 			delete rIDs[d.requestId];
 			delete tabs[d.tabId];
+			const info = tabs.getInfo(d.tabId);
+			info.url = d.url;
 			return;
 		}
-		const info = tabs.getInfo(d.tabId);
-		info.url = d.documentUrl;
 		if (d.method !== 'GET' || !settings.enabled) return;
+		const info = tabs.getInfo(d.tabId);
 		const mode = info.getMode();
 		if (!mode) return;
 		const target = new URL(d.url);
