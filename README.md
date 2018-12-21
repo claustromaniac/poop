@@ -14,7 +14,7 @@ It is a standard that has been widely adopted for many years. From the client's 
 
 The same-origin policy is an effective security measure against both [XSS][XSS] and [XSRF][XSRF].
 
-[Wikipedia](https://en.wikipedia.org/wiki/Same-origin_policy)
+[Wikipedia](https://en.wikipedia.org/wiki/Same-origin_policy) ▪ [MDN](https://developer.mozilla.org/en-US/docs/Web/Security/Same-origin_policy)
 
 ### 🔵 How does CORS work?
 
@@ -25,7 +25,7 @@ Every time the browser makes a cross-origin request, it adds an `Origin` HTTP he
 3. `null`: in practice, this denies access to the resource, but this way is discouraged. The recommended way is to not include an `Access-Control-Allow-Origin` header at all.
 4. no header: access is denied.
 
-When the client reads the response headers, the request succeeds or fails based on the presence or absence of the `Access-Control-Allow-Origin` header (and its value). If the request did not include credentials, it only succeeds if the value of that header is either #1 or #2 (as listed above). If it did include credentials, it only succeeds is the value is #1.
+When the client reads the response headers, the request succeeds or fails based on the presence or absence of the `Access-Control-Allow-Origin` header (and its value). If the request did not include credentials, it only succeeds if the value of that header corresponds to either #1 or #2 (as listed above). If it *did* include credentials, the value must correspond to #1.
 
 ### 🔵 How does this extension work?
 
