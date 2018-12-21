@@ -2,34 +2,32 @@
 
 An extension for Firefox that gives users a safe degree of control over CORS requests, with the specific goal of preventing the browser from leaking unnecessary information.
 
-### 🔵 What is **CORS**?
+### 🔵 What is CORS?
 
 CORS stands for *Cross-Origin Resource Sharing*. In short, it is a mechanism used for bypassing the same-origin policy safely.
 
-- https://en.wikipedia.org/wiki/Cross-origin_resource_sharing
-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS
-- https://w3c.github.io/webappsec-cors-for-developers/
+[Wikipedia](https://en.wikipedia.org/wiki/Cross-origin_resource_sharing) ▪ [MDN](https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS) ▪ [W3C](https://w3c.github.io/webappsec-cors-for-developers/)
 
-### 🔵 What is the **same-origin policy**?
+### 🔵 What is the same-origin policy?
 
 It is a standard that has been widely adopted for many years. From the client's perspective, it denies access to resources when these are requested by other resources that were fetched from a different location. Such requests are known as cross-origin requests. 
 
 The same-origin policy is an effective security measure against both [XSS][XSS] and [XSRF][XSRF].
 
-- https://en.wikipedia.org/wiki/Same-origin_policy
+[Wikipedia](https://en.wikipedia.org/wiki/Same-origin_policy)
 
-### 🔵 How does **CORS** work?
+### 🔵 How does CORS work?
 
 Every time the browser makes a cross-origin request, it adds an `Origin` HTTP header to it, which tells the server the location of the resource that made the request. After the server parses that header, it decides whether to allow or deny access to its resource from that location. If access is allowed, the sever adds an `Access-Control-Allow-Origin` header to the response, indicating so. The most common values are:
 
-1. `<origin>`: this is the scheme+hostname+port (`https://www.example.org:8080`) of the resource that is allowed access. 
+1. `<origin>`: this is the `scheme`+`hostname`+`port` (`https://www.example.org:8080`) of the resource that is allowed access. 
 2. `*`: this means the resource is *public*. It can be accessed from anywhere as long as the request does not include credentials.
 3. `null`: in practice, this denies access to the resource, but this way is discouraged. The recommended way is to not include an `Access-Control-Allow-Origin` header at all.
 4. no header: access is denied.
 
-When the client reads the response headers, it allows or denies access to the resource based on the presence or absence of the `Access-Control-Allow-Origin` header (and its value). If the request did not include credentials, values #1 or #2 (as listed above) allow access to the resource. If it did include credentials, it will not succeed unless the value is #1.
+When the client reads the response headers, the request succeeds or fails based on the presence or absence of the `Access-Control-Allow-Origin` header (and its value). If the request did not include credentials, it only succeeds if the value of that header is either #1 or #2 (as listed above). If it did include credentials, it only succeeds is the value is #1.
 
-### 🔵 How does **this extension** work?
+### 🔵 How does this extension work?
 
 It has two main modes of operation: aggressive and relaxed.
 
@@ -38,7 +36,7 @@ It has two main modes of operation: aggressive and relaxed.
 
 When this extension decides to alter a request (after passing it through all the filters), that request is modified as follows:
 1. The `Origin` header is removed from it.
-2. Since there is no `Origin` header, the server's response most likely does not include an `Access-Control-Allow-Origin` header either, which would normally cause it to fail. To prevent that, this extension injects an `Access-Control-Allow-Origin: *` header in that specific response.
+2. Since there is no `Origin` header, the server's response most likely does not include an `Access-Control-Allow-Origin` header either, which would normally cause it to fail. To prevent that, this extension injects an `Access-Control-Allow-Origin: *` header into that specific response.
 
 ### 🔵 Is this *safe*?
 
@@ -46,7 +44,7 @@ Yes. At worst it will break website functionality, but there are various built-i
 
 ### 🔵 Why P.O.O.P.?
 
-Because I'm just a lowly hacker-wannabe and I don't want to raise anyone's expectations if I can avoid it. Plus, it was easy to come up with, and it is just as easy to remember.
+Because I'm but a lowly hacker-wannabe and I don't want to raise anyone's expectations if I can avoid it. Plus, it was easy to come up with, and it is just as easy to remember.
 
 ### 🔵 Dat icon is tacky AF
 
@@ -61,7 +59,7 @@ Since you're on Firefox and you seem to care about your privacy, I might as well
 
 ### 🔵 Acknowledgments
 - Big thanks to [crssi](https://github.com/crssi) for [bringing attention][issue] to this previously overlooked tracking vector, for all the help testing, and for all the feature suggestions. If not for him, the extension would still be the half-assed solution I first came up with, because I'm quite the lazy bum.
-- Other alpha/beta testers:
+- Other alpha/beta testers (in no particular order):
   - [StanGets](https://github.com/StanGets)
   - [KOLANICH](https://github.com/KOLANICH)
   - [AtomGit](https://github.com/atomGit)
