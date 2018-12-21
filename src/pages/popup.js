@@ -3,7 +3,7 @@
 document.addEventListener('DOMContentLoaded', () => {
 	const ui = getElements([
 		'enabled', 'host', 'altered', 'errors', 'global', 'aggressive',
-		'aggressiveL', 'relaxed', 'relaxedL', 'off', 'offL'
+		'aggressiveL', 'relaxed', 'relaxedL', 'off', 'offL', 'wrench'
 	]);
 	let red;
 	let green;
@@ -20,6 +20,9 @@ document.addEventListener('DOMContentLoaded', () => {
 		ui.altered.textContent = altered.toString();
 		ui.errors.textContent = msg._errors.toString();
 	};
+	ui.wrench.addEventListener('click', e => {
+		browser.runtime.openOptionsPage();
+	});
 	browser.tabs.query({active: true, currentWindow: true}).then(tabs => {
 		const port = browser.runtime.connect();
 		window.addEventListener('unload', function(event) {
