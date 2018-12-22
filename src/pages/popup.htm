@@ -7,41 +7,40 @@
 		<script defer src="popup.js"></script>
 	</head>
 	<body>
-		<div class="browser-style" id="switch">
-			<label for="enabled">enabled</label><input id="enabled" type="checkbox">
-		</div>
-		<div id="host"></div><br>
-		<div id="fs" class="browser-style">
-			<fieldset><legend>stats</legend>
-				<div class="box">
-					<div>altered requests</div>
-					<div>(total)</div>
-					<div id="altered" class="field">0</div>
-					<div>failed requests</div>
-					<div>(subset)</div>
-					<div id="errors" class="field">0</div>
-				</div>
+		<p id="host"></p>
+		<div class="fb">
+			<fieldset class="fb col"><legend>stats</legend>
+				<p>altered requests (total)</p>
+				<div id="altered" class="field">0</div>
+				<p>failed requests (subset)</p>
+				<div id="errors" class="field">0</div>
 			</fieldset>
-			<fieldset><legend>mode</legend>
-				<div class="box">
-					<div class="browser-style">
+			<div class="fb col">
+				<fieldset class="fb col"><legend>mode</legend>
+					<div class="browser-style fb">
 						<input id="global" type="radio" name="mode" checked>
 						<label for="global">use global setting</label>
 					</div>
-					<div class="browser-style">
+					<div class="browser-style fb">
 						<input id="aggressive" type="radio" name="mode" value="2" disabled>
 						<label id="aggressiveL" for="aggressive">aggressive</label>
 					</div>
-					<div class="browser-style">
+					<div class="browser-style fb">
 						<input id="relaxed" type="radio" name="mode" value="1" disabled>
 						<label id="relaxedL" for="relaxed">relaxed</label>
 					</div>
-					<div class="browser-style">
+					<div class="browser-style fb">
 						<input id="off" type="radio" name="mode" value="0" disabled>
 						<label id="offL" for="off">whitelisted</label>
 					</div>
-				</div>
-			</fieldset>
+				</fieldset>
+				<fieldset class="fb">
+					<div class="browser-style fb">
+						<input id="enabled" type="checkbox"><label for="enabled">enabled</label>
+					</div>
+					<button id="wrench" class="browser-style">🔧</button>
+				</fieldset>
+			</div>
 		</div>
 	</body>
 </html>
