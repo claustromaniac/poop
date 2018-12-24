@@ -1,51 +1,39 @@
+* { box-sizing: border-box; }
 body {
 	display: table;
-	height: 30em;
+	height: 40em;
 }
-fieldset {
-	width: 95vw;
-}
-summary {
-	font-size: 1.2em;
-}
-button {
-	margin-left: 0.25em;
-}
+code, fieldset, textarea { border-radius: 0.3em; }
+fieldset { width: 95vw; }
+summary { font-size: 1.2em; }
+button { margin-left: 0.25em; }
 textarea {
 	font-family: "Consolas";
 	font-weight: 100;
-}
-#saved {
-	color: #0B0;
-	font-weight: 300;
-	margin-left: 1em;
-}
-.code {
-	background-color: #333;
-	border: 0.1em solid #555;
-	border-radius: 0.3em;
-	color: #FFF;
-	font-family: "Consolas";
-	font-weight: 100;
-	opacity: 0.5;
-	padding: 0 0.5em;
-}
-.fbox {
-	align-items: center;
-	display: flex;
-	flex-wrap: wrap;
-	flex-direction: row;
-}
-div.browser-style.fbox {
-	width: 40%;
-}
-.hbar{
 	width: 100%;
 }
+#saved {
+	color: #021;
+	font-weight: 300;
+	margin-left: 1em;
+	text-shadow: 0 0 0.2em #0F8;
+}
+code {
+	color: crimson;
+    background-color: rgba(0,0,0,0.1);
+    padding: 0 0.5em;
+	text-shadow: 0 0 0.1em #005;
+}
+.fb {
+	align-items: center;
+	display: flex;
+	flex-flow: row wrap;
+}
+.fb * { margin: auto inherit; }
+div.browser-style.fb { width: 40%; }
+.block { display: block; }
 .hidden {
 	opacity: 0;
-	transition:opacity 500ms;
+	transition: opacity 500ms;
 }
-.shown {
-	opacity: 1;
-}
+.shown { opacity: 1; }

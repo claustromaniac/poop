@@ -8,12 +8,12 @@
 	<body>
 		<script defer src="options.js"></script>
 		<fieldset>
-			<details id="d1"><summary>Global mode</summary>
-				<p>This defines the main criteria for removing <span class="code">Origin</span> headers. Both modes should be perfectly safe, but the aggressive mode is less tolerant, therefore it causes more web content to break. The relaxed mode should break website functionality only very rarely.</p>
-				<div class="browser-style fbox">
+			<details id="d1" open><summary>Global mode</summary>
+				<p>This defines the main criteria for removing <code>Origin</code> headers. Both modes are safe, but the aggressive mode is less tolerant, therefore it causes more web content to break. The relaxed mode should break website functionality only very rarely.</p>
+				<div class="browser-style fb">
 					<input id="aggressive" name="mode" type="radio"><label for="aggressive">aggressive</label>
 				</div>
-				<div class="browser-style fbox">
+				<div class="browser-style fb">
 					<input id="relaxed" name="mode" type="radio"><label for="relaxed">relaxed (default)</label>
 				</div>
 			</details>
@@ -23,58 +23,61 @@
 				<p>These rules override the mode on a per-site basis. 
 				Use the Exclusions section below if you want to exclude requests instead.</p>
 				<p>
-					2 = aggressive<br>
-					1 = relaxed<br>
-					0 = whitelisted<br>
+					<code>2</code> = aggressive<br>
+					<code>1</code> = relaxed<br>
+					<code>0</code> = whitelisted<br>
 				</p>
-				Accepts hostname or full URL
-				<div class="code">0: www.example.com</div>
-				Accepts wildcards
-				<div class="code">2: www.example.*</div>
-				Accepts regular expressions
-				(must separate with <span class="code">::</span> instead of <span class="code">:</span>)
-				<div class="code">1:: ^https?://www\.example\.(com|net)</div>
+				<p>
+					Accepts hostname or full URL<br>
+					<code>0: www.example.com</code><br>
+					Accepts wildcards<br>
+					<code>2: www.example.*</code><br>
+					Accepts regular expressions
+					(must separate with <code>::</code> instead of <code>:</code>)<br>
+					<code>1:: ^https?://www\.example\.(com|net)</code>
+				</p>
 				<p>Enter one rule per line. When multiple rules conflict, the one closest to the bottom wins.</p>
-				<textarea autocomplete="off" class="browser-style hbar" id="overrides" rows="10" spellcheck="false"></textarea>
+				<textarea autocomplete="off" class="browser-style" id="overrides" rows="10" spellcheck="false"></textarea>
 			</details>
 		</fieldset><br>
 		<fieldset>
 			<details id="d3"><summary>Type filters</summary>
-				<p><span class="code">Origin</span> headers will always be removed from <span class="code">GET</span> requests of the types selected here. These filters are only meaningful in relaxed mode.</p>
-				<div class="fbox">
-					<div class="browser-style fbox">
+				<p>In relaxed mode, the logic of the aggressive mode will be used when dealing with requests of the 
+				types selected here. This is like enabling the aggressive mode partially.</p>
+				<div class="fb">
+					<div class="browser-style fb">
 						<input class="srt" id="font" type="checkbox"><label for="font">font</label>
 					</div>
-					<div class="browser-style fbox">
+					<div class="browser-style fb">
 						<input class="srt" id="image" type="checkbox"><label for="image">image</label>
 					</div>
-					<div class="browser-style fbox">
+					<div class="browser-style fb">
 						<input class="srt" id="imageset" type="checkbox"><label for="imageset">imageset</label>
 					</div>
-					<div class="browser-style fbox">
+					<div class="browser-style fb">
 						<input class="srt" id="media" type="checkbox"><label for="media">media</label>
 					</div>
-					<div class="browser-style fbox">
+					<div class="browser-style fb">
 						<input class="srt" id="object" type="checkbox"><label for="object">object</label>
 					</div>
-					<div class="browser-style fbox">
+					<div class="browser-style fb">
 						<input class="srt" id="object_subrequest" type="checkbox">
 						<label for="object_subrequest">object_subrequest (plugin)</label>
 					</div>
-					<div class="browser-style fbox">
+					<div class="browser-style fb">
 						<input class="srt" id="script" type="checkbox"><label for="script">script</label>
 					</div>
-					<div class="browser-style fbox">
+					<div class="browser-style fb">
 						<input class="srt" id="stylesheet" type="checkbox"><label for="stylesheet">stylesheet</label>
 					</div>
-					<div class="browser-style fbox">
+					<div class="browser-style fb">
 						<input class="srt" id="websocket" type="checkbox"><label for="websocket">websocket</label>
 					</div>
-					<div class="browser-style fbox">
+					<div class="browser-style fb">
 						<input class="srt" id="xmlhttprequest" type="checkbox">
 						<label for="xmlhttprequest">xmlhttprequest (XHR)</label>
 					</div>
-					<div class="browser-style fbox">
+					<div class="browser-style fb">
 						<input class="srt" id="other" type="checkbox" ><label for="other">other</label>
 					</div>
 				</div>
@@ -82,30 +85,28 @@
 		</fieldset><br>
 		<fieldset>
 			<details id="d4"><summary>Exclusions</summary>
-				<p>If this is enabled, the extension will call a subroutine to exclude requests based on a comparison of root domains, to prevent breakage. <span class="code">Origin</span> headers will not be removed from requests when the resource's root domain matches the origin's root domain, like this:</p>
-				<div class="code">
-					thisisanexample.com<br>
-					www.thisisanexample.co.uk
-				</div><br>
-				<div class="browser-style fbox">
+				<p>If this is enabled, the extension will call a subroutine to exclude requests based on a comparison of root domains, to prevent breakage. <code>Origin</code> headers will not be removed from requests when the resource's root domain matches the origin's root domain, like this:</p>
+				<p><code>thisisanexample.com</code><br>
+				<code>www.thisisanexample.co.uk</code></p>			
+				<div class="browser-style fb">
 					<input id="rdExclusions" type="checkbox"><label for="rdExclusions">
 						Exclude root domain matches
 					</label>
-				</div>
+				</div><br>
 				<hr>
 				<p>You can exclude requests using patterns here, with the following syntax:</p>
-				<div class="code">&lt;origin hostname&gt;&lt;space&gt;&lt;target hostname&gt;</div>
+				<code>&lt;origin hostname&gt;&lt;space&gt;&lt;target hostname&gt;</code>
 				<p>Wildcards are accepted.</p>
-				<textarea autocomplete="off" class="browser-style hbar" id="exclusions" rows="10" spellcheck="false"
-				placeholder="www.youtube.com *.googlevideo.com&#10;* target.always.excluded.com&#10;origin.always.excluded *"></textarea>
+				<textarea autocomplete="off" class="browser-style" id="exclusions" rows="10" spellcheck="false"
+				placeholder="www.youtube.com *.googlevideo.com&#10;* target.always.excluded&#10;origin.always.excluded *"></textarea>
 			</details>
 		</fieldset><br>
 		<fieldset>
 			<details id="d5"><summary>Other</summary>
-				<p>Removing <span class="code">Origin</span> headers from requests that also include <span class="code">Referer</span> headers can make you look more unique than not removing anything. With this option enabled, any <span class="code">Referer</span> headers found in the requests altered by this extension will be spoofed.</p>
-				<div class="browser-style fbox">
+				<p>Removing <code>Origin</code> headers from requests that also include <code>Referer</code> headers can make you look more unique than not removing anything. With this option enabled, any <code>Referer</code> headers found in the requests altered by this extension will be spoofed.</p>
+				<div class="browser-style fb">
 					<input id="referers" type="checkbox">
-					<label for="referers">Spoof cross-origin <span class="code">Referer</span></label>
+					<label for="referers">Spoof cross-origin <code>Referer</code></label>
 				</div>
 			</details>
 		</fieldset><br>
