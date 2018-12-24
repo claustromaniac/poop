@@ -18,7 +18,7 @@ The same-origin policy is an effective security measure against both [XSS][XSS] 
 
 ### 🔵 How does CORS work?
 
-Every time the browser makes a cross-origin request, it adds an `Origin` HTTP header to it, which tells the server the location of the resource that made the request. After the server parses that header, it decides whether to allow or deny access to its resource from that location. If access is allowed, the sever adds an `Access-Control-Allow-Origin` header to the response, indicating so. The most common values are:
+Every time the browser makes a cross-origin request, it adds an `Origin` HTTP header to it, which tells the server the location of the resource that triggered the request. After the server parses that header, it decides whether to allow or deny access to its resource from that location. If access is allowed, the sever adds an `Access-Control-Allow-Origin` header to the response, indicating so. The most common values are:
 
 1. `<origin>`: this is the `scheme`+`hostname`+`port` (`https://www.example.org:8080`) of the resource that is allowed access. 
 2. `*`: this means the resource is *public*. It can be accessed from anywhere as long as the request does not include credentials.
@@ -41,6 +41,13 @@ When this extension decides to alter a request (after passing it through all the
 ### 🔵 Is this *safe*?
 
 Yes. At worst it will break website functionality, but there are various built-in ways to circumvent that.
+
+### 🔵 How exactly does the relaxed mode work?
+
+In relaxed mode, a request is excluded automatically when it fulfills any of the following conditions:
+- it includes cookies.
+- it includes an `Authorization` header.
+- it includes the `username`, `password`, `query` or `hash` portions of the URL. `scheme://username:password@hostname:port/path/?query#hash`
 
 ### 🔵 Why P.O.O.P.?
 
