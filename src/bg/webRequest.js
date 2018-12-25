@@ -95,7 +95,7 @@
 		if (origin) {
 			if (referer) {
 				if (settings.referers) {
-					newHeaders.push({name:'Referer', value:`${target.origin}/`});
+					newHeaders.push({name:'Referer', value:`${d.url}`});
 					console.debug(
 						`Privacy-Oriented Origin Policy: Referer spoofed (request #${d.requestId})\n${target.origin}`
 					);
