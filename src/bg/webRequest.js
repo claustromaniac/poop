@@ -36,7 +36,10 @@
 			info.url = d.url;
 			return;
 		}
-		if (d.method !== 'GET' || !settings.enabled) return;
+		if (
+			(d.method !== 'GET' && d.method !== 'OPTIONS') || 
+			!settings.enabled
+		) return;
 		const info = tabs.getInfo(d.tabId);
 		const mode = info.getMode();
 		if (!mode) return;
@@ -86,6 +89,10 @@
 					break;
 				case 'authorization':
 					if (mode === 1 && !settings.strictTypes[d.type]) return;
+					newHeaders.push(header);
+					break;
+				case 'access-control-request-method':
+					if (d.method === 'OPTIONS' && header.value !== 'GET') return;
 					newHeaders.push(header);
 					break;
 				default:

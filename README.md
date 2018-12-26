@@ -38,16 +38,22 @@ When this extension decides to alter a request (after passing it through all the
 1. The `Origin` header is removed from it.
 2. Since there is no `Origin` header, the server's response most likely does not include an `Access-Control-Allow-Origin` header either, which would normally cause it to fail. To prevent that, this extension injects an `Access-Control-Allow-Origin: *` header into that specific response.
 
-### 🔵 Is this *safe*?
-
-Yes. At worst it will break website functionality, but there are various built-in ways to circumvent that.
-
 ### 🔵 How exactly does the relaxed mode work?
 
 In relaxed mode, a request is excluded automatically when it fulfills any of the following conditions:
 - it includes cookies.
 - it includes an `Authorization` header.
 - it includes the `username`, `password`, `query` or `hash` portions of the URL. `scheme://username:password@hostname:port/path/?query#hash`
+
+### 🔵 What about preflight requests?
+
+Preflight requests use the `OPTIONS` method instead of the `GET` method.
+
+Up to version `1.2.1`, the extension was outright ignoring all non-`GET` requests, including those. However, Since `1.3.0` the extension also alters preflight requests, but **only when it knows that the actual request(s) will use the `GET` method**. It does this by reading the `Access-Control-Request-Method` header in the preflight request. If it is found and the value is `GET`, the preflight request itself is altered too, otherwise it is ignored just like before `1.3.0`.
+
+### 🔵 Is this extension *safe*?
+
+Yes. At worst it will break website functionality, but there are various built-in ways to circumvent that.
 
 ### 🔵 Why P.O.O.P.?
 
@@ -65,7 +71,7 @@ This extension is meant to *protect* your privacy, not *just* respect it.
 Since you're on Firefox and you seem to care about your privacy, I might as well recommend you to take a good look at [this project](https://github.com/ghacksuserjs/ghacks-user.js), which is where this extension was first conceived.
 
 ### 🔵 Acknowledgments
-- Big thanks to [crssi](https://github.com/crssi) for [bringing attention][issue] to this previously overlooked tracking vector, for all the help testing, and for all the feature suggestions. If not for him, the extension would still be the half-assed solution I first came up with, because I'm quite the lazy bum.
+- Big thanks to [crssi](https://github.com/crssi) for [bringing attention][issue] to this previously overlooked tracking vector, for all the help testing, and for all the feature suggestions and valuable feedback. If not for him, the extension would still be the half-assed solution I first came up with, because I'm quite the lazy bum.
 - Other alpha/beta testers (in no particular order):
   - [StanGets](https://github.com/StanGets)
   - [KOLANICH](https://github.com/KOLANICH)
