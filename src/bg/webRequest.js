@@ -57,6 +57,7 @@
 		const newHeaders = [];
 		let origin;
 		let referer;
+		let acrm; // Access-Control-Request-Method
 		for (const header of d.requestHeaders) {
 			switch (header.name.toLowerCase()) {
 				case 'cookie':
@@ -92,7 +93,8 @@
 					newHeaders.push(header);
 					break;
 				case 'access-control-request-method':
-					if (d.method === 'OPTIONS' && header.value !== 'GET') return;
+					if (header.value !== 'GET') return;
+					acrm = true;
 					newHeaders.push(header);
 					break;
 				default:
@@ -100,6 +102,7 @@
 			}
 		}
 		if (origin) {
+			if (d.method == 'OPTIONS' && !acrm) return;
 			if (referer) {
 				if (settings.referers) {
 					newHeaders.push({name:'Referer', value:`${d.url}`});
