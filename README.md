@@ -49,7 +49,7 @@ In relaxed mode, a request is excluded automatically when it fulfills any of the
 
 Preflight requests use the `OPTIONS` method instead of the `GET` method.
 
-Up to version `1.2.1`, the extension was outright ignoring all non-`GET` requests, including those. However, Since `1.3.0` the extension also alters preflight requests, but **only when it knows that the actual request(s) will use the `GET` method**. It does this by reading the `Access-Control-Request-Method` header in the preflight request. If it is found and the value is `GET`, the preflight request itself is altered too, otherwise it is ignored just like before `1.3.0`.
+Up to version `1.2.1`, the extension was outright ignoring all non-`GET` requests, including those. However, since `1.3.0` the extension also alters preflight requests, but **only when it knows that the actual request(s) will use the `GET` method**. It does this by reading the `Access-Control-Request-Method` header in the preflight request. If it is found and the value is `GET`, the preflight request itself is altered too, otherwise it is ignored just like before `1.3.0`.
 
 ### 🔵 Is this extension *safe*?
 
