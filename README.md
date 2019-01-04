@@ -53,7 +53,19 @@ Up to version `1.2.1`, the extension was outright ignoring all non-`GET` request
 
 ### 🔵 Is this extension *safe*?
 
-Yes. At worst it will break website functionality, but there are various built-in ways to circumvent that.
+Attentive readers shouldn't need me to explain this, but here I go anyway: Yes, this is safe. It will at worst break website functionality, but there are various built-in ways to circumvent that.
+
+Why do I say this is safe? Because this only touches `GET` requests (and preflight requests for `GET` requests), and when it does, it always sets the `Access-Control-Allow-Origin` to `*`. When a request is altered that way it only succeeds as long as the requests is not flagged as having credentials. Firefox aborts the request and throws a (healthy) yellow warning in the console otherwise.
+
+Ideally, I would like professionals to let me know if there are any potential dangers I'm overlooking, but that would be quite a luxury. The only potential risks I can imagine are related to badly configured and/or outdated servers, but those risks are inherent to the servers themselves anyway. I suppose the extension would at worst aggravate those risks in some **very** specific scenarios, maybe.
+
+If you want to minimize (or even eliminate) those theoretical risks (which would exist even without this extension), enable first-party isolation and/or use containers.
+
+### 🔵 How come no one else made anything like this extension in all these years?
+
+I can't really speak for others, but my guess is only a small subset of extension developers would be willing to hack a security mechanism (ethically).
+
+Additionally, this extension relies on relatively new standards. The same-origin policy and CORS have existed for a long time, but they kept getting updates over the years. For example, only a few years ago [the W3C recommended][W3Creco] to introduce a *supports credentials* flag and to abort those specific CORS requests when the server responds with an `Access-Control-Allow-Origin: *`. Before that, the `*` was extremely permissive and risky. There is a considerable amount of outdated documentation and old articles out there referencing that outdated behavior.
 
 ### 🔵 Why P.O.O.P.?
 
@@ -81,4 +93,5 @@ Since you're on Firefox and you seem to care about your privacy, I might as well
 [XSS]: https://en.wikipedia.org/wiki/Cross-site_scripting
 [XSRF]: https://en.wikipedia.org/wiki/Cross-site_request_forgery
 [issue]: https://github.com/ghacksuserjs/ghacks-user.js/issues/509
+[W3Creco]: https://www.w3.org/TR/cors/#supports-credentials
 [DWI]: https://gist.githubusercontent.com/claustromaniac/f054061826ac71bf9e122edb2a313bc0/raw/edf025b5e3fb917177df890fefd15c70ead8b35c/dealwithit.gif
