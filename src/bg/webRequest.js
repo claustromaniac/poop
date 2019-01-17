@@ -6,11 +6,21 @@ const rIDs = {}; // tab objs by request ID
 const getRoot = host => {
 	const parts = host.split('.');
 	let root;
+	let previous = '';
 	while (parts.length > 1) {
+		previous = root;
 		root = parts.shift();
-		if (publicSuffixes.has(parts.join('.'))) break;
+		const suffix = parts.join('.');
+		if (publicSuffixes.has(suffix)) {
+			previous = null;
+			break;
+		}
+		if (publicSuffixes.has(`*.${suffix}`)) {
+			root = null;
+			break;
+		}
 	}
-	return root;
+	return root || previous;	
 };
 const isExcluded = (origin, target) => {
 	const arr = settings.exclusions;
