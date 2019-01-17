@@ -1,11 +1,6 @@
-root = true
-
 [*]
 charset = utf-8
-indent_style = tab
-indent_size = tab
 insert_final_newline = true
-tab_width = 4
 trim_trailing_whitespace = true
 
 [*.md]
