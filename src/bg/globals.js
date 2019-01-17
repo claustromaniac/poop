@@ -1,3 +1,5 @@
+'use strict';
+
 const settings = new Settings();
 const popup = new Popup();
 const tabs = new Tabs();

@@ -1,11 +1,5 @@
 'use strict';
 
-function getElements(ids) {
-	const result = {};
-	for (const id of ids) result[id] = document.getElementById(id);
-	return result;
-}
-
 const overriderx = /^([0-2])::?(\S+)$/;
 const exclusionrx = /^\s*(\S+)[ \t]+(\S+)\s*$/;
 

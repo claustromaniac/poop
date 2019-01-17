@@ -3,10 +3,8 @@
 	<head>
 		<meta charset="utf-8">
 		<link href="options.css" rel="stylesheet">
-		<script src="misc.js"></script>
 	</head>
 	<body>
-		<script defer src="options.js"></script>
 		<fieldset>
 			<details id="d1" open><summary>Global mode</summary>
 				<p>This defines the main criteria for removing <code>Origin</code> headers. Both modes are safe, but the aggressive mode is less tolerant, therefore it causes more web content to break. The relaxed mode should break website functionality only very rarely.</p>
@@ -111,5 +109,7 @@
 			</details>
 		</fieldset><br>
 		<button class="browser-style" id="save">Save</button><span class="hidden" id="saved"></span>
+		<script src="misc.js"></script>
+		<script src="options.js"></script>
 	</body>
 </html>

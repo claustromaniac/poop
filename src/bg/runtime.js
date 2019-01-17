@@ -1,3 +1,5 @@
+'use strict';
+
 browser.runtime.onConnect.addListener(port => {
 	port.onMessage.addListener(msg => {
 		popup.start(msg, port);

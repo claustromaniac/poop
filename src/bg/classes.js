@@ -22,10 +22,11 @@ class Settings {
 			}
 		};
 		this.loading = (async () => {
-			let saved = await browser.storage.local.get(this.defaults);
+			const local = browser.storage.local;
+			let saved = await local.get(this.defaults);
 			if (!Array.isArray(saved.overrides)) saved.overrides = [];
 			this.all = saved;
-			await browser.storage.local.set(saved);
+			await local.set(saved);
 			browser.storage.onChanged.addListener((changes, area) => {
 				console.debug(`Privacy-Oriented Origin Policy: ${area} storage changed`);
 				for (const i in changes) {
