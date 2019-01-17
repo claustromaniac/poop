@@ -86,7 +86,7 @@
 							return;
 						}
 					}
-					origin = true;
+					origin = `Origin ${header.value}`;
 					break;
 				case 'authorization':
 					if (mode === 1 && !settings.strictTypes[d.type]) return;
@@ -111,6 +111,7 @@
 					);
 				} else newHeaders.push(referer);
 			}
+			console.debug(`Privacy-Oriented Origin Policy: ${origin} removed from request #${d.requestId}`);
 			rIDs[d.requestId] = info;
 			return {requestHeaders: newHeaders};
 		}
