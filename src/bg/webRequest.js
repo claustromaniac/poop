@@ -6,21 +6,17 @@ const rIDs = {}; // tab objs by request ID
 const getRoot = host => {
 	const parts = host.split('.');
 	let root;
-	let previous = '';
 	while (parts.length > 1) {
-		previous = root;
+		const previous = root;
 		root = parts.shift();
 		const suffix = parts.join('.');
-		if (publicSuffixes.has(suffix)) {
-			previous = null;
-			break;
-		}
+		if (publicSuffixes.has(suffix)) break;
 		if (publicSuffixes.has(`*.${suffix}`)) {
-			root = null;
+			root = previous;
 			break;
 		}
 	}
-	return root || previous;	
+	return root;
 };
 const isExcluded = (origin, target) => {
 	const arr = settings.exclusions;
@@ -47,7 +43,7 @@ browser.webRequest.onBeforeSendHeaders.addListener(d => {
 		return;
 	}
 	if (
-		(d.method !== 'GET' && d.method !== 'OPTIONS') || 
+		(d.method !== 'GET' && d.method !== 'OPTIONS') ||
 		!settings.enabled
 	) return;
 	const info = tabs.getInfo(d.tabId);
