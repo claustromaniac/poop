@@ -1,6 +1,8 @@
+[![][AMO_button]][AMO]
+
 ### 🔵 What is this?
 
-An extension for Firefox that gives users a safe degree of control over CORS requests, with the specific goal of preventing the browser from leaking unnecessary information.
+An extension for Firefox that gives users a safe degree of control over CORS requests, with the specific goal of preventing the browser from leaking information to third parties.
 
 ### 🔵 What is CORS?
 
@@ -57,7 +59,7 @@ Attentive readers shouldn't need me to explain this, but here I go anyway: Yes, 
 
 Why do I say this is safe? Because this only touches `GET` requests (and preflight requests for `GET` requests), and when it does, it always sets the `Access-Control-Allow-Origin` to `*`. When a request is altered this way, it only succeeds as long as it was not flagged as having credentials. Firefox aborts the request and throws a (healthy) yellow warning in the console otherwise.
 
-Ideally, I would like professionals to let me know if there are any potential dangers I'm overlooking, but that would be quite a luxury. The only potential risks I can imagine are related to badly configured and/or outdated servers, but those risks are inherent to the servers themselves anyway. I suppose this extension would at worst aggravate those risks in some **very** specific scenarios, maybe.
+Ideally, I would like professionals to let me know if there are any potential dangers I'm overlooking, but that would be quite a luxury. The only potential risks I can imagine are related to badly configured and/or outdated servers, but those risks are inherent to the servers themselves anyway. I suppose this extension would at worst aggravate those risks in some **very** specific (unlikely) scenarios.
 
 If you want to minimize (or even eliminate) those theoretical risks (which would exist even without this extension), enable first-party isolation and/or use containers.
 
@@ -66,6 +68,10 @@ If you want to minimize (or even eliminate) those theoretical risks (which would
 I can't really speak for others, but my guess is only a small subset of extension developers would be willing to hack a security mechanism (ethically).
 
 Additionally, this extension relies on relatively new standards. The same-origin policy and CORS have existed for a long time, but they kept getting updates over the years. It was only a few years ago that [the W3C recommended][W3Creco] the introduction of a *supports credentials* flag and aborting requests flagged as such whenever the server responds with an `Access-Control-Allow-Origin: *`. Before that, the `*` was extremely permissive and risky, which means an extension like this one would've been a lot riskier in the past.
+
+### 🔵 Can CORS leaks be avoided by any other (alternative) means?
+
+The only alternative I know of is to block all cross-origin requests. Content blockers like uBlock and uMatrix allow blocking *third-party* requests, which is a broader group.
 
 ### 🔵 Why P.O.O.P.?
 
@@ -82,16 +88,23 @@ This extension is meant to *protect* your privacy, not *just* respect it.
 
 Since you're on Firefox and you seem to care about your privacy, I might as well recommend you to take a good look at [this project](https://github.com/ghacksuserjs/ghacks-user.js), which is where this extension was first conceived.
 
+### 🔵 Source code and changelog
+
+See the [release notes][releases] in the project's [Github repository][repo].
+
 ### 🔵 Acknowledgments
 - Big thanks to [crssi](https://github.com/crssi) for [bringing attention][issue] to this previously overlooked tracking vector, for all the help testing, and for all the feature suggestions and valuable feedback. If not for him, the extension would still be the half-assed solution I first came up with, because I'm quite the lazy bum.
 - Other alpha/beta testers (in no particular order):
   - [StanGets](https://github.com/StanGets)
   - [KOLANICH](https://github.com/KOLANICH)
-  - [AtomGit](https://github.com/atomGit)
+  - [atomGit](https://github.com/atomGit)
 
-
+[AMO]: https://addons.mozilla.org/firefox/addon/privacy-oriented-origin-policy/
+[AMO_button]: https://gist.github.com/claustromaniac/f054061826ac71bf9e122edb2a313bc0/raw/AMO-button_1.png
+[releases]: https://github.com/claustromaniac/poop/releases
+[repo]: https://github.com/claustromaniac/poop/
 [XSS]: https://en.wikipedia.org/wiki/Cross-site_scripting
 [XSRF]: https://en.wikipedia.org/wiki/Cross-site_request_forgery
 [issue]: https://github.com/ghacksuserjs/ghacks-user.js/issues/509
 [W3Creco]: https://www.w3.org/TR/cors/#supports-credentials
-[DWI]: https://gist.githubusercontent.com/claustromaniac/f054061826ac71bf9e122edb2a313bc0/raw/edf025b5e3fb917177df890fefd15c70ead8b35c/dealwithit.gif
+[DWI]: https://gist.githubusercontent.com/claustromaniac/f054061826ac71bf9e122edb2a313bc0/raw/dealwithit.gif
