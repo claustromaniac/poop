@@ -71,7 +71,7 @@ Additionally, this extension relies on relatively new standards. The same-origin
 
 ### 🔵 Can CORS leaks be avoided by any other (alternative) means?
 
-The only alternative I know of is to block all cross-origin requests. Content blockers like uBlock and uMatrix allow blocking *third-party* requests, which is a broader group.
+The only alternative I know of is to block **all** cross-origin requests. Content blockers like **uBlock Origin** and **uMatrix** allow blocking *third-party* requests, but not all third-party requests are cross-origin requests (it is a broader group).
 
 ### 🔵 Why P.O.O.P.?
 
