@@ -1,9 +1,33 @@
 'use strict';
 
-const acao = {name: 'Access-Control-Allow-Origin', value: '*'};
-const filter = {urls: ["<all_urls>"]};
-const rIDs = {}; // tab objs by request ID
-const getRoot = host => {
+/** ---------- Functions ---------- **/
+
+function IPinRange(ip, min, max) {
+	for (const i in ip) {
+		if (ip[i] < min[i] || ip[i] > max[i]) return;
+	}
+	return true;
+}
+
+function isReservedAddress(str) {
+	const addr = str.split('.');
+	if (addr.length !== 4) return;
+	for (const part of addr) {
+		if (Number.isNaN(+part) || part < 0 || part > 255) return;
+	}
+	return (
+		IPinRange(addr, [10,0,0,0], [10,255,255,255]) ||
+		IPinRange(addr, [100,64,0,0], [100,127,255,255]) ||
+		IPinRange(addr, [127,0,0,0], [127,255,255,255]) ||
+		IPinRange(addr, [169,254,0,0], [169,254,255,255]) ||
+		IPinRange(addr, [172,16,0,0], [172,31,255,255]) ||
+		IPinRange(addr, [192,0,0,0], [192,0,0,255]) ||
+		IPinRange(addr, [192,168,0,0], [192,168,255,255]) ||
+		IPinRange(addr, [198,18,0,0], [198,19,255,255])
+	);
+}
+
+function getRoot(host) {
 	const parts = host.split('.');
 	let root;
 	while (parts.length > 1) {
@@ -17,8 +41,9 @@ const getRoot = host => {
 		}
 	}
 	return root;
-};
-const isExcluded = (origin, target) => {
+}
+
+function isExcluded(origin, target) {
 	const arr = settings.exclusions;
 	for (const e of arr) {
 		if (e.origin.includes('*')) {
@@ -31,7 +56,13 @@ const isExcluded = (origin, target) => {
 		} else if (e.target !== target) continue;
 		return true;
 	}
-};
+}
+
+/** ------------------------------ **/
+
+const acao = {name: 'Access-Control-Allow-Origin', value: '*'};
+const filter = {urls: ["<all_urls>"]};
+const rIDs = {}; // tab objs by request ID
 
 browser.webRequest.onBeforeSendHeaders.addListener(d => {
 	if (d.tabId === -1 || !d.requestHeaders) return;
@@ -57,7 +88,7 @@ browser.webRequest.onBeforeSendHeaders.addListener(d => {
 			target.hash ||
 			target.username ||
 			target.password
-		)
+		) || isReservedAddress(target.hostname)
 	) return;
 
 	const newHeaders = [];
