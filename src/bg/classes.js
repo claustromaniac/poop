@@ -3,7 +3,7 @@ class Settings {
 		this.defaults = {
 			'enabled': true,
 			'exclusions': [],
-			'rdExclusions': false,
+			'rdExclusions': true,
 			'referers': true,
 			'relaxed': true,	//false = aggressive
 			'overrides': [],	//host-specific overrides: 0=whitelisted, 1=relaxed, 2=aggressive
