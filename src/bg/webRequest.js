@@ -84,7 +84,7 @@ browser.webRequest.onBeforeSendHeaders.addListener(d => {
 	if (
 		mode === 1 &&
 		!settings.strictTypes[d.type] && (
-			target.searchParams ||
+			target.searchParams.toString() ||
 			target.hash ||
 			target.username ||
 			target.password
